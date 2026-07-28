@@ -1,0 +1,165 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   Design tokens
+   Every value below was read out of the Figma source file via the REST API
+   rather than sampled by eye - see docs/design-spec.md for the mapping from
+   Figma layer to token.
+   --------------------------------------------------------------------------- */
+
+@theme {
+  --font-sans: var(--font-open-runde), ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand ------------------------------------------------------------------ */
+  --color-brand: #105b48; /* masthead bar, avatar glyph */
+  --color-brand-accent: #176d58; /* active nav item (text + 15% tint) */
+  --color-brand-deep: #0c5d56; /* "Total Riders' Credit" figure */
+
+  /* Data + status ---------------------------------------------------------- */
+  --color-data-blue: #4545fe; /* series 1, "View all" links, Total Inflow */
+  --color-data-green: #12b76a; /* series 2, MRR, positive deltas */
+  --color-data-red: #f04438; /* series 3 */
+  --color-data-orange: #f97316; /* Payout */
+  --color-negative: #dc2626; /* falling delta label */
+  --color-highlight: #ffff00; /* headline figures on photo cards */
+
+  /* Surfaces --------------------------------------------------------------- */
+  --color-canvas: #fbfcfc; /* page background */
+  --color-surface: #ffffff; /* cards */
+  --color-surface-muted: #f9fafb; /* card header strip */
+  --color-surface-sunken: #f5f5f5; /* selected segment, prev-arrow disc */
+  --color-surface-invert: #242526; /* floating chat button */
+
+  /* Lines ------------------------------------------------------------------ */
+  --color-line: #e4e4e4; /* card borders */
+  --color-line-soft: #f4f4f5; /* masthead + nav hairlines */
+  --color-line-faint: #e5e5e5; /* carousel dot border */
+  --color-line-strong: #d6d6d6; /* "View Transactions" outline */
+
+  /* Text ------------------------------------------------------------------- */
+  --color-ink: #141414; /* stat figures */
+  --color-ink-strong: #191919; /* page + card headings */
+  --color-ink-title: #292929; /* overview card titles */
+  --color-ink-body: #3d3d3d; /* nav labels, tile labels */
+  --color-ink-muted: #525252; /* stat headings */
+  --color-ink-subtle: #606060; /* chart subtitle */
+  --color-ink-faint: #919191; /* chart axis labels */
+  --color-ink-on-media: #e4e4e7; /* location line over photos */
+  --color-ink-on-media-dim: #d4d4d8; /* inactive badge tab */
+
+  /* Radii ------------------------------------------------------------------ */
+  --radius-control: 8px; /* nav pill, segmented control, badge */
+  --radius-panel: 12px; /* stat tiles, photo cards */
+  --radius-card: 16px; /* overview + chart cards, carousel discs */
+
+  /* Type scale - size / line-height pairs lifted from the Figma text styles - */
+  --text-2xs: 0.625rem; /* 10 */
+  --text-2xs--line-height: 0.75rem; /* 12 */
+  --text-xs: 0.75rem; /* 12 */
+  --text-xs--line-height: 0.9375rem; /* 15 */
+  --text-sm: 0.8125rem; /* 13 */
+  --text-sm--line-height: 1.25rem; /* 20 */
+  --text-sm--letter-spacing: 0.02em; /* 0.26 */
+  --text-base: 0.875rem; /* 14 */
+  --text-base--line-height: 1.0625rem; /* 17 */
+  --text-md: 1rem; /* 16 */
+  --text-md--line-height: 1.1875rem; /* 19 */
+  --text-lg: 1.125rem; /* 18 */
+  --text-lg--line-height: 1.375rem; /* 22 */
+  --text-xl: 1.1875rem; /* 19 */
+  --text-xl--line-height: 1.5625rem; /* 25 */
+  --text-2xl: 1.25rem; /* 20 */
+  --text-2xl--line-height: 1.5rem; /* 24 */
+  --text-3xl: 1.5rem; /* 24 */
+  --text-3xl--line-height: 2.375rem; /* 38 */
+
+  /* Effects ---------------------------------------------------------------- */
+  --shadow-scroll-fade: -4px 0 12px 0 rgb(0 0 0 / 0.04);
+}
+
+/* ---------------------------------------------------------------------------
+   Page shell
+   At 1440 the design lays content in a 1284px column with 78px gutters. The
+   width formula reproduces that exactly at 1440 and degrades to a fixed gutter
+   on narrower viewports.
+   --------------------------------------------------------------------------- */
+
+:root {
+  --shell-gutter: 1rem;
+}
+@media (min-width: 768px) {
+  :root {
+    --shell-gutter: 1.5rem;
+  }
+}
+@media (min-width: 1280px) {
+  :root {
+    --shell-gutter: 2rem;
+  }
+}
+
+@utility shell {
+  margin-inline: auto;
+  width: min(100% - (var(--shell-gutter) * 2), 1284px);
+}
+
+/* Two stacked gradients sit over each photo card in the design. */
+@utility media-scrim {
+  background-image: linear-gradient(to bottom, rgb(0 0 0 / 0.05), rgb(0 0 0 / 0.6)),
+    linear-gradient(to bottom, rgb(0 0 0 / 0.2), rgb(0 0 0 / 0.8));
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+   --------------------------------------------------------------------------- */
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink-strong);
+    font-family: var(--font-sans);
+  }
+
+  /* The design has no dark mode, so opt out rather than let the UA invert form
+     controls and scrollbars inconsistently. */
+  :root {
+    color-scheme: only light;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-brand-accent) 22%, transparent);
+  }
+}
+
+/* Caption swap on the photo-card carousels. */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
