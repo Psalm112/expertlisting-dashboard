@@ -2,12 +2,13 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { CarouselArrow } from '@/components/ui/CarouselArrow';
 import { FilterBadge } from '@/components/ui/FilterBadge';
 import { ProgressDots } from '@/components/ui/ProgressDots';
+import { EASE_OUT } from '@/lib/motion';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import type { MetricCard } from '@/lib/types';
-import { cn } from '@/lib/cn';
 import { useAutoAdvance } from './use-auto-advance';
 import { LISTING_IMAGES } from './listing-images';
 
@@ -54,15 +55,6 @@ export function MetricPhotoCard({ card, priority }: { card: MetricCard; priority
   const stepPhoto = (delta: number) =>
     setPhoto((index) => (index + delta + current.photos.length) % current.photos.length);
 
-  const imageFade = { transitionDuration: `${crossfadeMs}ms` };
-
-  // Two different captions dissolving on top of each other read as doubled text,
-  // so the outgoing one clears before the incoming one arrives.
-  const captionFade = (active: boolean) => ({
-    transitionDuration: `${Math.round(crossfadeMs * (active ? 0.45 : 0.35))}ms`,
-    transitionDelay: active ? `${Math.round(crossfadeMs * 0.4)}ms` : '0ms',
-  });
-
   return (
     <article
       className="group rounded-panel bg-surface-invert relative isolate aspect-[418/378] overflow-hidden"
@@ -71,26 +63,32 @@ export function MetricPhotoCard({ card, priority }: { card: MetricCard; priority
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
     >
+      {/* Every photograph stays mounted and crossfades, so switching never waits
+          on a network round trip. */}
       {views.map((entry, viewIndex) =>
         entry.photos.map((image, photoIndex) => {
           const showing = viewIndex === view && photoIndex === photo;
 
           return (
-            <Image
+            <motion.div
               key={`${entry.id}-${image.key}`}
-              src={LISTING_IMAGES[image.key]}
-              alt={showing ? image.alt : ''}
               aria-hidden={!showing}
-              fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 418px"
-              placeholder="blur"
-              priority={priority && viewIndex === (card.defaultView ?? 0) && photoIndex === 0}
-              className={cn(
-                'object-cover transition-[opacity,transform] ease-linear group-hover:scale-[1.03]',
-                showing ? 'opacity-100' : 'opacity-0',
-              )}
-              style={imageFade}
-            />
+              animate={{ opacity: showing ? 1 : 0 }}
+              transition={{ duration: crossfadeMs / 1000, ease: 'linear' }}
+              className="absolute inset-0"
+            >
+              <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-[1.03]">
+                <Image
+                  src={LISTING_IMAGES[image.key]}
+                  alt={showing ? image.alt : ''}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 418px"
+                  placeholder="blur"
+                  priority={priority && viewIndex === (card.defaultView ?? 0) && photoIndex === 0}
+                  className="object-cover"
+                />
+              </div>
+            </motion.div>
           );
         }),
       )}
@@ -118,33 +116,34 @@ export function MetricPhotoCard({ card, priority }: { card: MetricCard; priority
         </div>
       )}
 
-      {/* Captions share one grid cell so they crossfade in place. */}
-      <div className="absolute inset-x-4 bottom-11 z-10 grid items-end">
-        {views.map((entry, index) => (
-          <div
-            key={entry.id}
-            aria-hidden={index !== view}
-            className={cn(
-              'col-start-1 row-start-1 transition-opacity ease-linear',
-              index === view ? 'opacity-100' : 'pointer-events-none opacity-0',
-            )}
-            style={captionFade(index === view)}
+      {/* `mode="wait"` lets the outgoing caption clear before the next arrives.
+          Two different captions dissolving together read as doubled text. */}
+      <div className="absolute inset-x-4 bottom-11 z-10">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={current.id}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: crossfadeMs / 2500, ease: EASE_OUT }}
           >
             <p className="text-base font-medium tracking-wide text-white uppercase">
-              {entry.eyebrow}
+              {current.eyebrow}
             </p>
 
-            {entry.title && (
-              <h3 className="mt-1 text-lg font-semibold text-balance text-white">{entry.title}</h3>
+            {current.title && (
+              <h3 className="mt-1 text-lg font-semibold text-balance text-white">
+                {current.title}
+              </h3>
             )}
-            {entry.location && <p className="text-ink-on-media text-sm">{entry.location}</p>}
-            {entry.figure && (
+            {current.location && <p className="text-ink-on-media text-sm">{current.location}</p>}
+            {current.figure && (
               <p className="text-highlight mt-1 text-lg font-semibold tabular-nums">
-                {entry.figure}
+                {current.figure}
               </p>
             )}
-          </div>
-        ))}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {views.length > 1 && (
