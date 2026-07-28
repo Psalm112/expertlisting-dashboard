@@ -2,13 +2,14 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { CarouselArrow } from '@/components/ui/CarouselArrow';
 import { FilterBadge } from '@/components/ui/FilterBadge';
 import { ProgressDots } from '@/components/ui/ProgressDots';
 import { EASE_OUT } from '@/lib/motion';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import type { MetricCard } from '@/lib/types';
+import { cn } from '@/lib/cn';
 import { useAutoAdvance } from './use-auto-advance';
 import { LISTING_IMAGES } from './listing-images';
 
@@ -70,12 +71,14 @@ export function MetricPhotoCard({ card, priority }: { card: MetricCard; priority
           const showing = viewIndex === view && photoIndex === photo;
 
           return (
-            <motion.div
+            <m.div
               key={`${entry.id}-${image.key}`}
               aria-hidden={!showing}
               animate={{ opacity: showing ? 1 : 0 }}
               transition={{ duration: crossfadeMs / 1000, ease: 'linear' }}
-              className="absolute inset-0"
+              // The class covers server render and the pre-hydration window;
+              // Framer's inline style takes over once it is running.
+              className={cn('absolute inset-0', showing ? 'opacity-100' : 'opacity-0')}
             >
               <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-[1.03]">
                 <Image
@@ -88,7 +91,7 @@ export function MetricPhotoCard({ card, priority }: { card: MetricCard; priority
                   className="object-cover"
                 />
               </div>
-            </motion.div>
+            </m.div>
           );
         }),
       )}
@@ -120,7 +123,7 @@ export function MetricPhotoCard({ card, priority }: { card: MetricCard; priority
           Two different captions dissolving together read as doubled text. */}
       <div className="absolute inset-x-4 bottom-11 z-10">
         <AnimatePresence mode="wait" initial={false}>
-          <motion.div
+          <m.div
             key={current.id}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -142,7 +145,7 @@ export function MetricPhotoCard({ card, priority }: { card: MetricCard; priority
                 {current.figure}
               </p>
             )}
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </div>
 
