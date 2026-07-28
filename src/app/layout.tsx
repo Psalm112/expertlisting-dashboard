@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { ChatButton } from '@/components/layout/ChatButton';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { openRunde } from './fonts';
+import { Providers } from './providers';
 import './globals.css';
 
 const DESCRIPTION =
@@ -38,13 +39,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to content
         </a>
 
-        <SiteHeader />
+        <Providers>
+          <SiteHeader />
 
-        <main id="main" className="shell flex-1 pt-3 pb-20">
-          {children}
-        </main>
+          <main id="main" className="shell flex-1 pt-3 pb-20">
+            {children}
+          </main>
 
-        <ChatButton />
+          <ChatButton />
+        </Providers>
       </body>
     </html>
   );

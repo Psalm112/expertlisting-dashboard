@@ -2,7 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { ICONS } from '@/components/icons/registry';
+import { SPRING } from '@/lib/motion';
 import { NAV_ITEMS } from '@/lib/mock-data';
 import { cn } from '@/lib/cn';
 
@@ -24,7 +26,6 @@ export function PrimaryNav() {
           className={cn(
             'flex h-14 items-center gap-1 overflow-x-auto scroll-smooth md:h-[67px]',
             'xl:justify-between xl:gap-12 xl:overflow-visible',
-            // hide the scrollbar without hiding the overflow
             '[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden',
           )}
         >
@@ -38,15 +39,24 @@ export function PrimaryNav() {
                   href={item.href}
                   aria-current={active ? 'page' : undefined}
                   className={cn(
-                    'rounded-control flex h-[38px] items-center justify-center gap-2 px-5',
+                    'rounded-control relative flex h-[38px] items-center justify-center gap-2 px-5',
                     'text-base whitespace-nowrap transition-colors duration-150',
                     active
-                      ? 'bg-brand-accent/15 text-brand-accent font-semibold'
+                      ? 'text-brand-accent font-semibold'
                       : 'text-ink-body hover:bg-surface-sunken font-normal',
                   )}
                 >
-                  <Icon className="size-6 shrink-0" />
-                  {item.label}
+                  {/* One pill shared across items, so it slides between tabs. */}
+                  {active && (
+                    <motion.span
+                      layoutId="nav-pill"
+                      transition={SPRING}
+                      className="bg-brand-accent/15 rounded-control absolute inset-0"
+                    />
+                  )}
+
+                  <Icon className="relative size-6 shrink-0" />
+                  <span className="relative">{item.label}</span>
                 </Link>
               </li>
             );
