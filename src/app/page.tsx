@@ -6,7 +6,7 @@ import { CURRENT_USER, METRIC_CARDS, OVERVIEW_PANELS } from '@/lib/mock-data';
 export default function DashboardPage() {
   return (
     <>
-      <h1 className="text-2xl font-semibold text-ink-strong">
+      <h1 className="text-ink-strong text-2xl font-semibold">
         Welcome, {CURRENT_USER.greetingName}
       </h1>
 

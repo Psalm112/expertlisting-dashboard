@@ -63,10 +63,14 @@ for (const asset of ASSETS) {
 
   before += input.size;
   after += output.size;
-  console.log(`${asset.to.padEnd(24)} ${kb(input.size).padStart(9)} -> ${kb(output.size).padStart(8)}`);
+  console.log(
+    `${asset.to.padEnd(24)} ${kb(input.size).padStart(9)} -> ${kb(output.size).padStart(8)}`,
+  );
 }
 
 const unused = (await readdir(SRC)).filter((f) => !ASSETS.some((a) => a.from === f));
 if (unused.length) console.log(`\nskipped (not visible in the design): ${unused.join(', ')}`);
 
-console.log(`\ntotal ${kb(before)} -> ${kb(after)}  (${(100 - (after / before) * 100).toFixed(1)}% smaller)`);
+console.log(
+  `\ntotal ${kb(before)} -> ${kb(after)}  (${(100 - (after / before) * 100).toFixed(1)}% smaller)`,
+);

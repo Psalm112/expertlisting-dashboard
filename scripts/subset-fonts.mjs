@@ -46,7 +46,9 @@ const CHARSET = [
 const kb = (n) => `${(n / 1024).toFixed(1)} KB`;
 
 if (!existsSync(SRC)) {
-  console.error(`Missing ${path.relative(root, SRC)}/, download Open Runde first (see script header).`);
+  console.error(
+    `Missing ${path.relative(root, SRC)}/, download Open Runde first (see script header).`,
+  );
   process.exit(1);
 }
 
@@ -62,8 +64,12 @@ for (const { file, out, weight } of WEIGHTS) {
 
   before += input.length;
   after += subset.length;
-  console.log(`${String(weight).padEnd(4)} ${out.padEnd(34)} ${kb(input.length).padStart(9)} -> ${kb(subset.length).padStart(8)}`);
+  console.log(
+    `${String(weight).padEnd(4)} ${out.padEnd(34)} ${kb(input.length).padStart(9)} -> ${kb(subset.length).padStart(8)}`,
+  );
 }
 
 console.log(`\n${CHARSET.length} glyphs kept`);
-console.log(`total ${kb(before)} -> ${kb(after)}  (${(100 - (after / before) * 100).toFixed(1)}% smaller)`);
+console.log(
+  `total ${kb(before)} -> ${kb(after)}  (${(100 - (after / before) * 100).toFixed(1)}% smaller)`,
+);
