@@ -1,0 +1,214 @@
+'use client';
+
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { CarouselArrow } from '@/components/ui/CarouselArrow';
+import { SALES_AXIS_MAX, SALES_SERIES, SALES_TICKS } from '@/lib/mock-data';
+import type { SalesPoint } from '@/lib/types';
+import { cn } from '@/lib/cn';
+
+/**
+ * Grouped bar chart, hand-built rather than pulled from a charting library.
+ *
+ * The design needs exactly one chart type with fixed geometry (4px bars, 3px
+ * apart, 18px between groups) and no axes, grid or legend. Recharts or similar
+ * would add ~90 KB to render markup we can express in a few divs, and would
+ * fight the pixel spacing rather than help it.
+ *
+ * Geometry comes straight from the Figma frame: the 0-50m axis spans 130px, and
+ * bars are free to overshoot it, as June's does in the source design.
+ */
+
+/** Pixels per million naira, from the Figma axis. */
+const SCALE = 130 / SALES_AXIS_MAX;
+/** Bar area height, leaving headroom for the overshooting bar. */
+const PLOT_HEIGHT = 150;
+/** Space above the bars for the hover readout to sit in. */
+const TOOLTIP_GUTTER = 36;
+
+const TONE: Record<string, string> = {
+  blue: 'bg-data-blue',
+  green: 'bg-data-green',
+  red: 'bg-data-red',
+};
+
+const formatValue = (value: number) => `₦${value.toFixed(1)}m`;
+
+export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabel: string }) {
+  const scroller = useRef<HTMLDivElement>(null);
+  const [overflow, setOverflow] = useState({ left: false, right: false });
+
+  const sync = useCallback(() => {
+    const node = scroller.current;
+    if (!node) return;
+    setOverflow({
+      left: node.scrollLeft > 1,
+      right: node.scrollLeft + node.clientWidth < node.scrollWidth - 1,
+    });
+  }, []);
+
+  useEffect(() => {
+    const node = scroller.current;
+    if (!node) return;
+
+    sync();
+    node.addEventListener('scroll', sync, { passive: true });
+    const observer = new ResizeObserver(sync);
+    observer.observe(node);
+
+    return () => {
+      node.removeEventListener('scroll', sync);
+      observer.disconnect();
+    };
+  }, [sync, data]);
+
+  const scrollBy = (direction: 1 | -1) => {
+    const node = scroller.current;
+    if (!node) return;
+    node.scrollBy({ left: direction * node.clientWidth * 0.8, behavior: 'smooth' });
+  };
+
+  return (
+    <div className="flex min-w-0 flex-col gap-3">
+      <div className="flex min-w-0 items-start gap-2">
+        <CarouselArrow
+          variant="chart"
+          direction="prev"
+          disabled={!overflow.left}
+          onClick={() => scrollBy(-1)}
+          className="mt-16 shrink-0"
+        />
+
+        <div className="flex min-w-0 flex-1 gap-3">
+          {/* Value axis. Labels sit on the same scale as the bars. */}
+          <div aria-hidden className="relative w-7 shrink-0" style={{ height: PLOT_HEIGHT }}>
+            {SALES_TICKS.map((tick) => (
+              <span
+                key={tick}
+                className="absolute right-0 translate-y-1/2 text-2xs text-ink-faint tabular-nums"
+                style={{ bottom: tick * SCALE }}
+              >
+                {tick === 0 ? '0' : `${tick}m`}
+              </span>
+            ))}
+          </div>
+
+          <div className="relative min-w-0 flex-1">
+            {/* Plot. Scrolls horizontally when the card is narrower than the series. */}
+            <div
+              ref={scroller}
+              className={cn(
+                'overflow-x-auto overflow-y-hidden',
+                '[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+              )}
+              style={{ paddingTop: TOOLTIP_GUTTER }}
+            >
+              <div className="flex w-max items-end gap-[18px]" style={{ height: PLOT_HEIGHT }}>
+                {data.map((point) => (
+                  <div
+                    key={point.month}
+                    className="group relative flex h-full items-end gap-[3px]"
+                    tabIndex={0}
+                    aria-label={`${point.month}: ${SALES_SERIES.map(
+                      (series) => `${series.label} ${formatValue(point.values[series.key])}`,
+                    ).join(', ')}`}
+                  >
+                    {SALES_SERIES.map((series) => (
+                      <div
+                        key={series.key}
+                        className={cn('w-1 rounded-[1px]', TONE[series.tone])}
+                        style={{ height: Math.max(2, point.values[series.key] * SCALE) }}
+                      />
+                    ))}
+
+                    {/* Value readout on hover / keyboard focus. */}
+                    <div
+                      role="tooltip"
+                      className={cn(
+                        'pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 -translate-x-1/2',
+                        'rounded-md bg-surface-invert px-2.5 py-1.5 whitespace-nowrap text-white shadow-lg',
+                        // `hidden` rather than `opacity-0`: an absolutely positioned
+                        // tooltip still contributes to the scroll container's
+                        // scrollWidth, which would make the chart look overflowed.
+                        'hidden group-hover:block group-focus-within:block',
+                        'motion-safe:animate-[fade-up_140ms_ease-out]',
+                      )}
+                    >
+                      <p className="text-2xs font-medium text-white/70">{point.month}</p>
+                      <ul className="mt-0.5 space-y-0.5">
+                        {SALES_SERIES.map((series) => (
+                          <li key={series.key} className="flex items-center gap-1.5 text-2xs">
+                            <span className={cn('size-1.5 rounded-full', TONE[series.tone])} />
+                            {formatValue(point.values[series.key])}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Category axis, aligned to the bar groups. */}
+              <div className="mt-2.5 flex w-max gap-[18px]">
+                {data.map((point) => (
+                  <span
+                    key={point.month}
+                    className="w-[18px] text-center text-2xs font-medium text-ink-faint"
+                  >
+                    {point.month}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Soft edge showing there is more chart out of view.
+                The design draws this as a hard white panel because it sits past
+                the final bar; as a live scroll affordance a gradient reads better
+                and never hides a bar outright. */}
+            <div
+              aria-hidden
+              className={cn(
+                'pointer-events-none absolute right-0 w-10 transition-opacity duration-200',
+                'bg-gradient-to-l from-surface via-surface/85 to-transparent',
+                overflow.right ? 'opacity-100' : 'opacity-0',
+              )}
+              style={{ top: TOOLTIP_GUTTER, height: PLOT_HEIGHT }}
+            />
+          </div>
+        </div>
+
+        <CarouselArrow
+          variant="chart"
+          direction="next"
+          disabled={!overflow.right}
+          onClick={() => scrollBy(1)}
+          className="mt-16 shrink-0"
+        />
+      </div>
+
+      {/* Non-visual equivalent of the chart. */}
+      <table className="sr-only">
+        <caption>Sales overview, {rangeLabel}</caption>
+        <thead>
+          <tr>
+            <th scope="col">Period</th>
+            {SALES_SERIES.map((series) => (
+              <th key={series.key} scope="col">
+                {series.label}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((point) => (
+            <tr key={point.month}>
+              <th scope="row">{point.month}</th>
+              {SALES_SERIES.map((series) => (
+                <td key={series.key}>{formatValue(point.values[series.key])}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
