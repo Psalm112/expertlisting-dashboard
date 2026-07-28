@@ -22,8 +22,10 @@ import { cn } from '@/lib/cn';
 const SCALE = 130 / SALES_AXIS_MAX;
 /** Bar area height, leaving headroom for the overshooting bar. */
 const PLOT_HEIGHT = 150;
-/** Space above the bars for the hover readout to sit in. */
-const TOOLTIP_GUTTER = 36;
+/** Breathing room above the bars. */
+const PLOT_GUTTER = 36;
+/** Keeps the readout from hanging off the side of the card. */
+const TOOLTIP_MARGIN = 64;
 
 const TONE: Record<string, string> = {
   blue: 'bg-data-blue',
@@ -35,7 +37,9 @@ const formatValue = (value: number) => `₦${value.toFixed(1)}m`;
 
 export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabel: string }) {
   const scroller = useRef<HTMLDivElement>(null);
+  const plot = useRef<HTMLDivElement>(null);
   const [overflow, setOverflow] = useState({ left: false, right: false });
+  const [hover, setHover] = useState<{ index: number; x: number } | null>(null);
 
   const sync = useCallback(() => {
     const node = scroller.current;
@@ -50,13 +54,20 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
     const node = scroller.current;
     if (!node) return;
 
+    const onScroll = () => {
+      sync();
+      // The readout is positioned against the plot, so drop it while scrolling
+      // rather than let it drift away from its bar group.
+      setHover(null);
+    };
+
     sync();
-    node.addEventListener('scroll', sync, { passive: true });
+    node.addEventListener('scroll', onScroll, { passive: true });
     const observer = new ResizeObserver(sync);
     observer.observe(node);
 
     return () => {
-      node.removeEventListener('scroll', sync);
+      node.removeEventListener('scroll', onScroll);
       observer.disconnect();
     };
   }, [sync, data]);
@@ -66,6 +77,24 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
     if (!node) return;
     node.scrollBy({ left: direction * node.clientWidth * 0.8, behavior: 'smooth' });
   };
+
+  /**
+   * The readout lives outside the scroll container. A horizontally scrollable
+   * element cannot also overflow visibly on the vertical axis, so a tooltip
+   * rendered inside it gets clipped at the top of the plot.
+   */
+  const showReadout = (index: number, group: HTMLElement) => {
+    const bounds = plot.current?.getBoundingClientRect();
+    if (!bounds) return;
+
+    const rect = group.getBoundingClientRect();
+    const centre = rect.left + rect.width / 2 - bounds.left;
+    const clamped = Math.min(Math.max(centre, TOOLTIP_MARGIN), bounds.width - TOOLTIP_MARGIN);
+
+    setHover({ index, x: clamped });
+  };
+
+  const active = hover ? data[hover.index] : null;
 
   return (
     <div className="flex min-w-0 flex-col gap-3">
@@ -92,7 +121,7 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
             ))}
           </div>
 
-          <div className="relative min-w-0 flex-1">
+          <div ref={plot} className="relative min-w-0 flex-1">
             {/* Plot. Scrolls horizontally when the card is narrower than the series. */}
             <div
               ref={scroller}
@@ -100,7 +129,8 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
                 'overflow-x-auto overflow-y-hidden',
                 '[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
               )}
-              style={{ paddingTop: TOOLTIP_GUTTER }}
+              style={{ paddingTop: PLOT_GUTTER }}
+              onMouseLeave={() => setHover(null)}
             >
               {/*
                 `mx-auto` centres the series when the card is wider than the
@@ -111,11 +141,14 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
                 className="mx-auto flex w-max items-end gap-[18px]"
                 style={{ height: PLOT_HEIGHT }}
               >
-                {data.map((point) => (
+                {data.map((point, index) => (
                   <div
                     key={point.month}
-                    className="group relative flex h-full items-end gap-[3px]"
+                    className="flex h-full items-end gap-[3px]"
                     tabIndex={0}
+                    onMouseEnter={(event) => showReadout(index, event.currentTarget)}
+                    onFocus={(event) => showReadout(index, event.currentTarget)}
+                    onBlur={() => setHover(null)}
                     aria-label={`${point.month}: ${SALES_SERIES.map(
                       (series) => `${series.label} ${formatValue(point.values[series.key])}`,
                     ).join(', ')}`}
@@ -123,44 +156,27 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
                     {SALES_SERIES.map((series) => (
                       <div
                         key={series.key}
-                        className={cn('w-1 rounded-[1px]', TONE[series.tone])}
+                        className={cn(
+                          'w-1 rounded-[1px] transition-opacity duration-150',
+                          TONE[series.tone],
+                          hover && hover.index !== index && 'opacity-45',
+                        )}
                         style={{ height: Math.max(2, point.values[series.key] * SCALE) }}
                       />
                     ))}
-
-                    {/* Value readout on hover / keyboard focus. */}
-                    <div
-                      role="tooltip"
-                      className={cn(
-                        'pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 -translate-x-1/2',
-                        'rounded-md bg-surface-invert px-2.5 py-1.5 whitespace-nowrap text-white shadow-lg',
-                        // `hidden` rather than `opacity-0`: an absolutely positioned
-                        // tooltip still contributes to the scroll container's
-                        // scrollWidth, which would make the chart look overflowed.
-                        'hidden group-hover:block group-focus-within:block',
-                        'motion-safe:animate-[fade-up_140ms_ease-out]',
-                      )}
-                    >
-                      <p className="text-2xs font-medium text-white/70">{point.month}</p>
-                      <ul className="mt-0.5 space-y-0.5">
-                        {SALES_SERIES.map((series) => (
-                          <li key={series.key} className="flex items-center gap-1.5 text-2xs">
-                            <span className={cn('size-1.5 rounded-full', TONE[series.tone])} />
-                            {formatValue(point.values[series.key])}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
                   </div>
                 ))}
               </div>
 
               {/* Category axis, aligned to the bar groups. */}
               <div className="mx-auto mt-2.5 flex w-max gap-[18px]">
-                {data.map((point) => (
+                {data.map((point, index) => (
                   <span
                     key={point.month}
-                    className="w-[18px] text-center text-2xs font-medium text-ink-faint"
+                    className={cn(
+                      'w-[18px] text-center text-2xs font-medium transition-colors duration-150',
+                      hover?.index === index ? 'text-ink-strong' : 'text-ink-faint',
+                    )}
                   >
                     {point.month}
                   </span>
@@ -179,8 +195,30 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
                 'bg-gradient-to-l from-surface via-surface/85 to-transparent',
                 overflow.right ? 'opacity-100' : 'opacity-0',
               )}
-              style={{ top: TOOLTIP_GUTTER, height: PLOT_HEIGHT }}
+              style={{ top: PLOT_GUTTER, height: PLOT_HEIGHT }}
             />
+
+            {active && hover && (
+              <div
+                role="tooltip"
+                className={cn(
+                  'pointer-events-none absolute z-30 -translate-x-1/2 -translate-y-full',
+                  'rounded-md bg-surface-invert px-2.5 py-1.5 whitespace-nowrap text-white shadow-lg',
+                  'motion-safe:animate-[fade-up_140ms_ease-out]',
+                )}
+                style={{ left: hover.x, top: PLOT_GUTTER - 8 }}
+              >
+                <p className="text-2xs font-medium text-white/70">{active.month}</p>
+                <ul className="mt-0.5 space-y-0.5">
+                  {SALES_SERIES.map((series) => (
+                    <li key={series.key} className="flex items-center gap-1.5 text-2xs">
+                      <span className={cn('size-1.5 rounded-full', TONE[series.tone])} />
+                      {formatValue(active.values[series.key])}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
 
