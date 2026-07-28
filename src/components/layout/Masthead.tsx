@@ -34,7 +34,11 @@ export function Masthead() {
                     type="button"
                     aria-label={action.label}
                     title={action.label}
-                    className="block rounded-md p-0.5 text-white/90 transition hover:text-white active:scale-95"
+                    // The prototype swaps these to a filled variant on hover over
+                    // 300ms. Those variants are remote components with no local
+                    // geometry, so the artwork cannot be exported; this keeps the
+                    // timing and the intent without inventing a second icon set.
+                    className="block rounded-md text-white/80 transition duration-300 hover:scale-110 hover:text-white active:scale-95"
                   >
                     <Icon className="size-8" />
                   </button>
@@ -46,7 +50,7 @@ export function Masthead() {
           <button
             type="button"
             aria-label={`Account menu for ${CURRENT_USER.greetingName}`}
-            className="grid size-10 shrink-0 place-items-center rounded-full border border-white/50 bg-white text-[1.4375rem]/[1.875rem] font-medium text-brand transition hover:bg-white/90 active:scale-95"
+            className="grid size-10 shrink-0 place-items-center rounded-full border border-white/50 bg-white text-[1.4375rem]/[1.875rem] font-medium text-brand ring-white/0 transition duration-300 ring-inset hover:ring-4 hover:ring-white/30 active:scale-95"
           >
             {CURRENT_USER.initial}
           </button>
