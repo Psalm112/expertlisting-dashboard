@@ -10,8 +10,12 @@ export default function DashboardPage() {
         Welcome, {CURRENT_USER.greetingName}
       </h1>
 
-      {/* 857 / 407 columns at 1440, per the design; stacks below xl. */}
-      <div className="mt-4 grid gap-5 xl:grid-cols-[minmax(0,1fr)_407px]">
+      {/*
+        857 / 407 columns, per the design. The split waits until 1360, which is
+        the first width where the full 1284 content column fits, so the sales
+        card lands on its designed 857 rather than being squeezed.
+      */}
+      <div className="mt-4 grid gap-5 min-[1360px]:grid-cols-[minmax(0,1fr)_407px]">
         <SalesOverviewCard />
 
         <div className="flex flex-col gap-5">

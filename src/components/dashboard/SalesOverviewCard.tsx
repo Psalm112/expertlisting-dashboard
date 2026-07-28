@@ -43,12 +43,18 @@ export function SalesOverviewCard() {
         className="mt-2 self-end"
       />
 
-      <div className="mt-4 flex flex-col gap-6 xl:flex-row xl:items-center xl:gap-4">
+      {/*
+        Chart and tiles sit side by side from 960, the first width where the
+        306px series, its axis and both arrows clear the 394px tile column.
+        Leaving it until xl left the chart alone on a full-width card with a lot
+        of dead space beside it.
+      */}
+      <div className="mt-4 flex flex-col gap-6 min-[960px]:flex-row min-[960px]:items-center min-[960px]:gap-4">
         <div className="min-w-0 flex-1">
           <SalesChart data={SALES_DATA[range]} rangeLabel={rangeLabel} />
         </div>
 
-        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 xl:w-[394px] xl:shrink-0">
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 min-[960px]:w-[394px] min-[960px]:shrink-0">
           {SALES_METRICS.map((metric) => (
             <SalesMetricTile key={metric.id} metric={metric} />
           ))}

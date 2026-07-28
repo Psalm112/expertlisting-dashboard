@@ -102,7 +102,15 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
               )}
               style={{ paddingTop: TOOLTIP_GUTTER }}
             >
-              <div className="flex w-max items-end gap-[18px]" style={{ height: PLOT_HEIGHT }}>
+              {/*
+                `mx-auto` centres the series when the card is wider than the
+                306px it needs. Once the content overflows the auto margins
+                resolve to zero, so nothing gets pushed out of reach.
+              */}
+              <div
+                className="mx-auto flex w-max items-end gap-[18px]"
+                style={{ height: PLOT_HEIGHT }}
+              >
                 {data.map((point) => (
                   <div
                     key={point.month}
@@ -148,7 +156,7 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
               </div>
 
               {/* Category axis, aligned to the bar groups. */}
-              <div className="mt-2.5 flex w-max gap-[18px]">
+              <div className="mx-auto mt-2.5 flex w-max gap-[18px]">
                 {data.map((point) => (
                   <span
                     key={point.month}
