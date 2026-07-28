@@ -23,11 +23,17 @@ const OUT = path.join(root, 'src', 'assets', 'listings');
 // The metric cards render at 418x378 CSS px; 2x covers high-density displays.
 const CARD = { width: 418 * 2, height: 378 * 2 };
 
-/** Figma image-fill hash -> shipped asset name. */
+/**
+ * Figma image-fill hash -> shipped asset name.
+ *
+ * fill-2 is intentionally absent. In the Figma file it sits underneath another
+ * image fill on the same rectangle, fully covered by it, so it never renders.
+ */
 const ASSETS = [
   { from: 'fill-1.png', to: 'site-visits.webp', position: 'centre' },
   { from: 'fill-3.png', to: 'most-clicked.webp', position: 'centre' },
   { from: 'fill-4.png', to: 'most-watchlisted.webp', position: 'centre' },
+  { from: 'fill-5.png', to: 'listing-views.webp', position: 'centre' },
 ];
 
 const kb = (n) => `${(n / 1024).toFixed(0)} KB`;
