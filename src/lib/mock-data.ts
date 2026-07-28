@@ -248,6 +248,10 @@ export const METRIC_CARDS: MetricCard[] = [
         figure: '20k',
         photos: [
           { key: 'mostWatchlisted', alt: 'Brick apartment building with balconies on each floor' },
+          {
+            key: 'mostClicked2',
+            alt: 'Low-rise villas with palm trees along a landscaped waterfront path',
+          },
         ],
       },
     ],

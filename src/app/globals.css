@@ -141,8 +141,7 @@
   animation: rise-in 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Loading state. The sweep is masked to the brand glyph, so `transform-box` has
-   to resolve against the rect's own box rather than the whole SVG viewport. */
+/* Loading state. */
 @keyframes brand-sweep {
   from {
     transform: translateX(-115%);
