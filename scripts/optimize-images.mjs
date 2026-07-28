@@ -26,12 +26,14 @@ const CARD = { width: 418 * 2, height: 378 * 2 };
 /**
  * Figma image-fill hash -> shipped asset name.
  *
- * fill-2 is intentionally absent. In the Figma file it sits underneath another
- * image fill on the same rectangle, fully covered by it, so it never renders.
+ * The most clicked card carries two image fills stacked on one rectangle. That
+ * is how the second photograph of the same listing is stored, and the prev/next
+ * arrows step between them.
  */
 const ASSETS = [
   { from: 'fill-1.png', to: 'site-visits.webp', position: 'centre' },
   { from: 'fill-3.png', to: 'most-clicked.webp', position: 'centre' },
+  { from: 'fill-2.png', to: 'most-clicked-2.webp', position: 'centre' },
   { from: 'fill-4.png', to: 'most-watchlisted.webp', position: 'centre' },
   { from: 'fill-5.png', to: 'listing-views.webp', position: 'centre' },
 ];
