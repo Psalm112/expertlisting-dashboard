@@ -173,62 +173,95 @@ export const OVERVIEW_PANELS: OverviewPanel[] = [
 /* Photo metric cards                                                         */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * The photo cards are component instances in Figma with two variants each, wired
+ * up in the prototype. The states below mirror that wiring:
+ *
+ * - Site visits (node 717:1985) swaps variant on an AFTER_TIMEOUT of 1s using a
+ *   SMART_ANIMATE transition of 1s, linear. Hence `autoplay`.
+ * - Most clicked (node 717:1986) swaps variant when "All Listings" is clicked.
+ *   The second variant puts the site-visits photograph on top and drops the
+ *   prev/next arrows.
+ * - Most watchlisted is a detached frame in the file with no prototype wiring, so
+ *   its second state is invented. See README > Assumptions.
+ */
 export const METRIC_CARDS: MetricCard[] = [
   {
     id: 'site-visits',
-    image: 'siteVisits',
-    imageAlt: 'Glass office towers seen from street level on an overcast morning',
-    showArrows: false,
-    slides: [
-      { id: 'visits', eyebrow: 'Total site visits', figure: '11k' },
-      { id: 'sessions', eyebrow: 'Average session', figure: '4m 12s' },
+    mode: 'auto',
+    autoplay: { dwellMs: 1000, crossfadeMs: 1000 },
+    states: [
+      {
+        id: 'visits',
+        image: 'siteVisits',
+        imageAlt: 'Glass office towers seen from street level on an overcast morning',
+        eyebrow: 'Total site visits',
+        figure: '11k',
+        showArrows: false,
+      },
+      {
+        id: 'listing-views',
+        image: 'listingViews',
+        imageAlt: 'Dark clad apartment block with amber window reveals against a clear sky',
+        eyebrow: 'Total listing views',
+        figure: '20k',
+        showArrows: false,
+      },
     ],
   },
   {
     id: 'most-clicked',
-    image: 'mostClicked',
-    imageAlt: 'White high-rise apartment tower with red accent panels',
+    mode: 'filter',
     filters: ['Live Listings', 'All Listings'],
-    defaultFilter: 0,
-    showArrows: true,
-    slides: [
+    defaultState: 0,
+    states: [
       {
-        id: 'urban-prime',
+        id: 'live',
+        image: 'mostClicked',
+        imageAlt: 'White high-rise apartment tower with red accent panels',
         eyebrow: 'Most clicked',
         title: 'Urban Prime Plaza Premiere',
         location: 'Ikoyi, Lagos',
         figure: '40k',
+        showArrows: true,
       },
       {
-        id: 'harbour-point',
+        id: 'all',
+        image: 'siteVisits',
+        imageAlt: 'Glass office towers seen from street level on an overcast morning',
         eyebrow: 'Most clicked',
-        title: 'Harbour Point Residences',
-        location: 'Victoria Island, Lagos',
-        figure: '32k',
+        title: 'Grey Abode',
+        location: 'Ajah, Lagos',
+        figure: '40k',
+        showArrows: false,
       },
     ],
   },
   {
     id: 'most-watchlisted',
-    image: 'mostWatchlisted',
-    imageAlt: 'Brick apartment building with balconies on each floor',
+    mode: 'filter',
     filters: ['Live Listings', 'All Listings'],
-    defaultFilter: 1,
-    showArrows: true,
-    slides: [
+    defaultState: 1,
+    states: [
       {
-        id: 'urban-prime',
-        eyebrow: 'Most watchlisted',
-        title: 'Urban Prime Plaza Premiere',
-        location: 'Ikoyi, Lagos',
-        figure: '20k',
-      },
-      {
-        id: 'lekki-gardens',
+        id: 'live',
+        image: 'mostWatchlisted',
+        imageAlt: 'Brick apartment building with balconies on each floor',
         eyebrow: 'Most watchlisted',
         title: 'Lekki Gardens Court II',
         location: 'Lekki Phase 1, Lagos',
         figure: '17k',
+        showArrows: true,
+      },
+      {
+        id: 'all',
+        image: 'mostWatchlisted',
+        imageAlt: 'Brick apartment building with balconies on each floor',
+        eyebrow: 'Most watchlisted',
+        title: 'Urban Prime Plaza Premiere',
+        location: 'Ikoyi, Lagos',
+        figure: '20k',
+        showArrows: true,
       },
     ],
   },

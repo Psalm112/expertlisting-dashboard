@@ -83,26 +83,39 @@ export interface SalesRange {
   label: string;
 }
 
-export interface ListingSlide {
+export type ListingImage = 'siteVisits' | 'mostClicked' | 'mostWatchlisted' | 'listingViews';
+
+/**
+ * One state of a photo card. In the Figma file these are component variants, and
+ * the whole card swaps between them: photograph, caption and arrows all change
+ * together.
+ */
+export interface CardState {
   id: string;
+  image: ListingImage;
+  imageAlt: string;
   /** Small caps label above the title, e.g. "MOST CLICKED". */
   eyebrow: string;
   title?: string;
   location?: string;
   /** Headline figure, rendered in the design's yellow. */
   figure: string;
+  /** Prev/next arrows are only drawn on some states. */
+  showArrows: boolean;
 }
 
 export interface MetricCard {
   id: string;
-  image: 'siteVisits' | 'mostClicked' | 'mostWatchlisted';
-  /** Alt text for the photograph. */
-  imageAlt: string;
+  /**
+   * How the card moves between states.
+   * `auto` cycles on a timer, `filter` switches from the Live/All badge.
+   */
+  mode: 'auto' | 'filter';
   /** Live/All filter shown on cards that have one. */
   filters?: string[];
-  /** Index into `filters` that starts selected. */
-  defaultFilter?: number;
-  /** Cards without arrows still show progress dots in the design. */
-  showArrows: boolean;
-  slides: ListingSlide[];
+  /** Index into `states` that starts visible. */
+  defaultState?: number;
+  states: CardState[];
+  /** Only meaningful for `auto`. Timings come from the Figma prototype. */
+  autoplay?: { dwellMs: number; crossfadeMs: number };
 }
