@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
-
 export function Reveal({
   children,
   delay = 0,

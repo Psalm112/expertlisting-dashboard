@@ -2,7 +2,6 @@ import { DeltaDown, DeltaUp } from '@/components/icons';
 import type { Trend } from '@/lib/types';
 import { cn } from '@/lib/cn';
 
-
 export function DeltaBadge({ value, trend }: { value: string; trend: Trend }) {
   const Icon = trend === 'up' ? DeltaUp : DeltaDown;
 

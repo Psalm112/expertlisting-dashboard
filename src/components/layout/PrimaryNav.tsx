@@ -8,7 +8,6 @@ import { SPRING } from '@/lib/motion';
 import { NAV_ITEMS } from '@/lib/mock-data';
 import { cn } from '@/lib/cn';
 
-
 export function PrimaryNav() {
   const pathname = usePathname();
 

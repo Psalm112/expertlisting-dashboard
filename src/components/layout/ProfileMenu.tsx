@@ -5,7 +5,6 @@ import { hoverPanel, POP, SPRING } from '@/lib/motion';
 import { useHoverOpen } from '@/lib/use-hover-open';
 import { CURRENT_USER } from '@/lib/mock-data';
 
-
 export function ProfileMenu() {
   const { open, triggerProps } = useHoverOpen();
 

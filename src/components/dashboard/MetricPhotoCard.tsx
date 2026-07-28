@@ -13,8 +13,6 @@ import { cn } from '@/lib/cn';
 import { useAutoAdvance } from './use-auto-advance';
 import { LISTING_IMAGES } from './listing-images';
 
-
-
 const FILTER_CROSSFADE_MS = 220;
 
 export function MetricPhotoCard({ card, priority }: { card: MetricCard; priority?: boolean }) {

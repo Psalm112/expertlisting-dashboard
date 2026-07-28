@@ -1,6 +1,5 @@
 import { cn } from '@/lib/cn';
 
-
 export function StatBlock({
   label,
   value,

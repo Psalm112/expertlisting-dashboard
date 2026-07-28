@@ -9,8 +9,6 @@ export interface Dot {
   disabled?: boolean;
 }
 
-
- 
 export function ProgressDots({
   dots,
   active,

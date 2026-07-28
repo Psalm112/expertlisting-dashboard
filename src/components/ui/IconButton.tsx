@@ -11,7 +11,6 @@ type Props = {
   children: ReactNode;
 } & Omit<ComponentProps<typeof m.button>, 'children'>;
 
-
 export function IconButton({ label, children, className, ...props }: Props) {
   return (
     <m.button

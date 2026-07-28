@@ -15,7 +15,6 @@ import {
   type IconProps,
 } from './index';
 
-
 export const ICONS: Record<IconKey, ComponentType<IconProps>> = {
   dashboard: NavDashboard,
   listings: NavListings,

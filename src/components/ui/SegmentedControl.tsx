@@ -10,7 +10,6 @@ interface Option {
   label: string;
 }
 
-
 export function SegmentedControl({
   options,
   value,

@@ -12,7 +12,6 @@ const ICONS = {
   media: { prev: CarouselPrev, next: CarouselNext },
 } as const;
 
-
 export function CarouselArrow({
   direction,
   variant = 'media',

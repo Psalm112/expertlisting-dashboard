@@ -68,7 +68,6 @@ export interface SalesSeries {
   tone: 'blue' | 'green' | 'red';
 }
 
-
 export interface SalesPoint {
   month: string;
   values: Record<string, number>;

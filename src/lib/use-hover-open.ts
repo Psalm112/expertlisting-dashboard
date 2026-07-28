@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 
-
 export function useHoverOpen() {
   const [open, setOpen] = useState(false);
   const [hoverable, setHoverable] = useState(true);

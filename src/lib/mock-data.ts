@@ -55,7 +55,6 @@ export const SALES_RANGES: SalesRange[] = [
 
 export const DEFAULT_SALES_RANGE = 'year';
 
-
 export const SALES_SERIES: SalesSeries[] = [
   { key: 'inflow', label: 'Total inflow', tone: 'blue' },
   { key: 'mrr', label: 'MRR', tone: 'green' },

@@ -15,7 +15,6 @@ import {
 import { ChartSkeleton } from './ChartSkeleton';
 import { SalesMetricTile } from './SalesMetricTile';
 
-
 const SalesChart = dynamic(() => import('./SalesChart').then((m) => m.SalesChart), {
   loading: () => <ChartSkeleton />,
 });
@@ -43,7 +42,6 @@ export function SalesOverviewCard() {
         className="mt-2 self-end"
       />
 
-      
       <div className="mt-4 flex flex-col gap-6 min-[960px]:flex-row min-[960px]:items-center min-[960px]:gap-4">
         <div className="min-w-0 flex-1">
           <SalesChart data={SALES_DATA[range]} rangeLabel={rangeLabel} />

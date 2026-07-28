@@ -7,7 +7,6 @@ import { Tooltip } from '@/components/ui/Tooltip';
 import { QUICK_ACTIONS } from '@/lib/mock-data';
 import { ProfileMenu } from './ProfileMenu';
 
-
 export function Masthead() {
   return (
     <div className="bg-brand">

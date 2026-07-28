@@ -8,7 +8,6 @@ interface Options {
   onTick: () => void;
 }
 
-
 export function useAutoAdvance({ enabled, intervalMs, onTick }: Options) {
   const callback = useRef(onTick);
 

@@ -4,7 +4,6 @@ import { m } from 'framer-motion';
 import { ChatBubble } from '@/components/icons';
 import { EASE_OUT, SPRING } from '@/lib/motion';
 
-
 export function ChatButton() {
   return (
     <m.button
