@@ -50,11 +50,12 @@ at any width. It is the heaviest dependency here, so it loads through
 `next/dynamic` behind a skeleton with the same footprint. That keeps it out of the
 initial bundle and stops the card resizing when it arrives.
 
-Bars stay 4px at every width. Only the gap between groups flexes, derived from the
-measured band, and once that band would fall below 30px the arrows start paging
-through the months rather than letting the bars crowd. That is also what makes the
-arrows mean something: the design draws them as a disabled and enabled pair, and
-here they genuinely are.
+Bars stay 4px at every width. Only the gap between groups flexes, and it flexes
+between bounds. Below a 30px band the arrows start paging through the months
+rather than letting the bars crowd, and above the design's 36px band the chart
+stops growing and centres instead, since 4px bars spread 60px apart stop reading
+as the same chart. That lower bound is also what makes the arrows mean something:
+the design draws them as a disabled and enabled pair, and here they genuinely are.
 
 Measured at 1440: 4px bars, 36px pitch, 130px between the 0 and 50m ticks, tallest
 bar 136px, all matching the frame. At 320 it shows five months at a time with the

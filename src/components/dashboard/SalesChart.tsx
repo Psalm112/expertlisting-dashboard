@@ -61,7 +61,15 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
   const maxOffset = Math.max(0, data.length - visible);
   const start = Math.min(offset, maxOffset);
 
-  const band = plotWidth ? (plotWidth - Y_AXIS_WIDTH) / visible : DESIGN_BAND;
+  /**
+   * The chart shrinks to fit but never stretches past the design's 36px band.
+   * Left to fill, a wide card spreads 4px bars 60px apart, which reads as a
+   * different chart. Past that width it centres instead.
+   */
+  const maxWidth = Y_AXIS_WIDTH + DESIGN_BAND * visible;
+  const innerWidth = plotWidth ? Math.min(plotWidth, maxWidth) : maxWidth;
+  const inset = Math.max(0, (plotWidth - innerWidth) / 2);
+  const band = (innerWidth - Y_AXIS_WIDTH) / visible;
 
   const windowed = useMemo(
     () =>
@@ -76,17 +84,22 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
 
   const track = (clientX: number, target: HTMLElement) => {
     const box = target.getBoundingClientRect();
-    const index = Math.floor((clientX - box.left - Y_AXIS_WIDTH) / band);
+    const index = Math.floor((clientX - box.left - inset - Y_AXIS_WIDTH) / band);
     setHovered(index >= 0 && index < visible ? index : null);
   };
 
-  
+  // Guarded rather than reset in an effect: the window can shrink under a stale
+  // hover when the container resizes or the range changes.
   const index = hovered !== null && hovered < visible ? hovered : null;
   const active = index === null ? null : data[start + index];
   const readoutX =
     index === null || !plotWidth
       ? 0
-      : clamp(Y_AXIS_WIDTH + index * band + band / 2, READOUT_MARGIN, plotWidth - READOUT_MARGIN);
+      : clamp(
+          inset + Y_AXIS_WIDTH + index * band + band / 2,
+          READOUT_MARGIN,
+          plotWidth - READOUT_MARGIN,
+        );
 
   return (
     <div className="flex min-w-0 flex-col gap-3">
@@ -106,50 +119,52 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
           onPointerMove={(event) => track(event.clientX, event.currentTarget)}
           onPointerLeave={() => setHovered(null)}
         >
-          <ResponsiveContainer width="100%" height={PLOT_HEIGHT + X_AXIS_HEIGHT}>
-            <BarChart
-              data={windowed}
-              margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-              barSize={BAR_SIZE}
-              barGap={BAR_GAP}
-              barCategoryGap={Math.max(6, Math.round(band - GROUP_WIDTH))}
-            >
-              <YAxis
-                width={Y_AXIS_WIDTH}
-                domain={[0, RENDER_MAX]}
-                ticks={TICKS}
-                tickFormatter={formatTick}
-                tick={AXIS_TICK}
-                axisLine={false}
-                tickLine={false}
-              />
-              <XAxis
-                dataKey="month"
-                height={X_AXIS_HEIGHT}
-                tick={{ ...AXIS_TICK, fontWeight: 500 }}
-                axisLine={false}
-                tickLine={false}
-              />
+          <div className="mx-auto" style={{ maxWidth }}>
+            <ResponsiveContainer width="100%" height={PLOT_HEIGHT + X_AXIS_HEIGHT}>
+              <BarChart
+                data={windowed}
+                margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+                barSize={BAR_SIZE}
+                barGap={BAR_GAP}
+                barCategoryGap={Math.max(6, Math.round(band - GROUP_WIDTH))}
+              >
+                <YAxis
+                  width={Y_AXIS_WIDTH}
+                  domain={[0, RENDER_MAX]}
+                  ticks={TICKS}
+                  tickFormatter={formatTick}
+                  tick={AXIS_TICK}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <XAxis
+                  dataKey="month"
+                  height={X_AXIS_HEIGHT}
+                  tick={{ ...AXIS_TICK, fontWeight: 500 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
 
-              {SALES_SERIES.map((entry) => (
-                <Bar
-                  key={entry.key}
-                  dataKey={entry.key}
-                  fill={TONE[entry.tone].fill}
-                  radius={1}
-                  isAnimationActive={!reducedMotion}
-                  animationDuration={480}
-                >
-                  {windowed.map((point, index) => (
-                    <Cell
-                      key={point.month}
-                      fillOpacity={hovered !== null && hovered !== index ? DIMMED : 1}
-                    />
-                  ))}
-                </Bar>
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
+                {SALES_SERIES.map((entry) => (
+                  <Bar
+                    key={entry.key}
+                    dataKey={entry.key}
+                    fill={TONE[entry.tone].fill}
+                    radius={1}
+                    isAnimationActive={!reducedMotion}
+                    animationDuration={480}
+                  >
+                    {windowed.map((point, index) => (
+                      <Cell
+                        key={point.month}
+                        fillOpacity={hovered !== null && hovered !== index ? DIMMED : 1}
+                      />
+                    ))}
+                  </Bar>
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
 
           <AnimatePresence>
             {active && (
