@@ -20,8 +20,7 @@ export default function DashboardPage() {
       */}
       <Reveal delay={0.06} className="mt-4 grid gap-5 min-[1360px]:grid-cols-[minmax(0,1fr)_407px]">
         <SalesOverviewCard />
-
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5 min-[1360px]:flex-col sm:max-[1359px]:flex-row">
           {OVERVIEW_PANELS.map((panel) => (
             <OverviewPanelCard key={panel.id} panel={panel} />
           ))}

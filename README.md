@@ -86,7 +86,9 @@ I also skipped clsx and tailwind-merge. Nothing in this UI overrides a utility
 that a variant already set, so conflict resolution would be roughly 7 KB doing
 nothing. `src/lib/cn.ts` is a ten line join instead.
 
-Transitions are plain CSS.
+Anything that is only a hover or colour change stays in CSS. Framer is reserved
+for the cases it is actually better at: shared-element pills, presence transitions
+and gesture states.
 
 `sharp` and `subset-font` are devDependencies for the asset scripts, and Prettier
 runs with the Tailwind plugin so class order stays canonical. None of them reach
@@ -145,7 +147,11 @@ A few things only showed up because of that:
   the very bottom whose only text child is hidden. I cropped the rendered frame
   at those coordinates to check before dropping them.
 - The chart's two arrow discs are different greys, `#f5f5f5` and `#e4e4e4`, which
-  reads as a disabled and enabled pair. They're wired to real scroll state.
+  reads as a disabled and enabled pair. They page the months for real, so the
+  states are earned rather than painted on.
+- The Live/All badge has a hairline between its two options: a `LINE` node, 1px
+  across the full height at 16% white. My first node walk filtered out vector
+  types and missed it, which is exactly the kind of thing a filter hides.
 - Each photo card carries two stacked gradient overlays, not one.
 - The typeface is Open Runde, which isn't on Google Fonts, so it's self-hosted
   and subset rather than swapped out for Inter.
