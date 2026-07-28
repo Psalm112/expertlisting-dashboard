@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { SPRING } from '@/lib/motion';
 import { cn } from '@/lib/cn';
 
@@ -69,7 +69,7 @@ export function SegmentedControl({
             )}
           >
             {selected && (
-              <motion.span
+              <m.span
                 layoutId="sales-range-pill"
                 transition={SPRING}
                 className="bg-surface-sunken rounded-control absolute inset-0"

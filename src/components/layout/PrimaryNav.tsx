@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { ICONS } from '@/components/icons/registry';
 import { SPRING } from '@/lib/motion';
 import { NAV_ITEMS } from '@/lib/mock-data';
@@ -48,7 +48,7 @@ export function PrimaryNav() {
                 >
                   {/* One pill shared across items, so it slides between tabs. */}
                   {active && (
-                    <motion.span
+                    <m.span
                       layoutId="nav-pill"
                       transition={SPRING}
                       className="bg-brand-accent/15 rounded-control absolute inset-0"

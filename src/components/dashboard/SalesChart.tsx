@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { Bar, BarChart, Cell, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { CarouselArrow } from '@/components/ui/CarouselArrow';
 import { POP } from '@/lib/motion';
@@ -159,7 +159,7 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
 
           <AnimatePresence>
             {active && (
-              <motion.div
+              <m.div
                 role="tooltip"
                 initial={{ opacity: 0, scale: 0.96 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -180,7 +180,7 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
                     </li>
                   ))}
                 </ul>
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
         </div>

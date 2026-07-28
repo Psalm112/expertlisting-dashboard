@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { SPRING } from '@/lib/motion';
 import { cn } from '@/lib/cn';
 
@@ -42,7 +42,7 @@ export function ProgressDots({
           )}
         >
           {index === active && (
-            <motion.span
+            <m.span
               layoutId={`dots-${label}`}
               transition={SPRING}
               className="border-line-faint absolute inset-0 rounded-full border bg-white"

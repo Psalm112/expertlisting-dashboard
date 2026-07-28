@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { ChatBubble } from '@/components/icons';
 import { EASE_OUT, SPRING } from '@/lib/motion';
 
@@ -13,7 +13,7 @@ import { EASE_OUT, SPRING } from '@/lib/motion';
  */
 export function ChatButton() {
   return (
-    <motion.button
+    <m.button
       type="button"
       aria-label="Open support chat"
       initial={{ opacity: 0, scale: 0.6 }}
@@ -23,9 +23,9 @@ export function ChatButton() {
       whileTap={{ scale: 0.94 }}
       className="bg-surface-invert fixed right-5 bottom-5 z-50 grid size-[58px] place-items-center rounded-full border border-white/20 text-white shadow-lg md:right-8 md:bottom-8"
     >
-      <motion.span transition={SPRING}>
+      <m.span transition={SPRING}>
         <ChatBubble className="size-6" />
-      </motion.span>
-    </motion.button>
+      </m.span>
+    </m.button>
   );
 }

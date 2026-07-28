@@ -1,18 +1,14 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import type { ComponentProps } from 'react';
 import { SPRING } from '@/lib/motion';
 import { cn } from '@/lib/cn';
 
 /** Outlined pill action, as on "View Transactions" in the sales card header. */
-export function PillButton({
-  className,
-  children,
-  ...props
-}: ComponentProps<typeof motion.button>) {
+export function PillButton({ className, children, ...props }: ComponentProps<typeof m.button>) {
   return (
-    <motion.button
+    <m.button
       type="button"
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.97 }}
@@ -26,6 +22,6 @@ export function PillButton({
       {...props}
     >
       {children}
-    </motion.button>
+    </m.button>
   );
 }

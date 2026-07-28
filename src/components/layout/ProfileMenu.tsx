@@ -1,6 +1,6 @@
 'use client';
 
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { hoverPanel, POP, SPRING } from '@/lib/motion';
 import { useHoverOpen } from '@/lib/use-hover-open';
 import { CURRENT_USER } from '@/lib/mock-data';
@@ -14,7 +14,7 @@ export function ProfileMenu() {
 
   return (
     <div className="relative shrink-0" {...triggerProps}>
-      <motion.button
+      <m.button
         type="button"
         aria-label={`Account menu for ${CURRENT_USER.name}`}
         aria-expanded={open}
@@ -25,18 +25,18 @@ export function ProfileMenu() {
         {CURRENT_USER.initial}
 
         {/* Ring grows out of the avatar rather than snapping on. */}
-        <motion.span
+        <m.span
           aria-hidden
           initial={false}
           animate={open ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.82 }}
           transition={POP}
           className="pointer-events-none absolute inset-0 rounded-full ring-4 ring-white/30"
         />
-      </motion.button>
+      </m.button>
 
       <AnimatePresence>
         {open && (
-          <motion.div
+          <m.div
             role="tooltip"
             variants={hoverPanel}
             initial="hidden"
@@ -49,7 +49,7 @@ export function ProfileMenu() {
               {CURRENT_USER.name}
             </p>
             <p className="text-ink-subtle mt-0.5 text-sm whitespace-nowrap">{CURRENT_USER.email}</p>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

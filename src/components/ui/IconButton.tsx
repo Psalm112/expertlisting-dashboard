@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import type { ComponentProps, ReactNode } from 'react';
 import { SPRING } from '@/lib/motion';
 import { cn } from '@/lib/cn';
@@ -9,7 +9,7 @@ type Props = {
   /** Required, since these render without a visible label. */
   label: string;
   children: ReactNode;
-} & Omit<ComponentProps<typeof motion.button>, 'children'>;
+} & Omit<ComponentProps<typeof m.button>, 'children'>;
 
 /**
  * Icon-only button with a consistent press response. Sizing is left to the
@@ -17,7 +17,7 @@ type Props = {
  */
 export function IconButton({ label, children, className, ...props }: Props) {
   return (
-    <motion.button
+    <m.button
       type="button"
       aria-label={label}
       whileTap={{ scale: 0.92 }}
@@ -27,6 +27,6 @@ export function IconButton({ label, children, className, ...props }: Props) {
       {...props}
     >
       {children}
-    </motion.button>
+    </m.button>
   );
 }

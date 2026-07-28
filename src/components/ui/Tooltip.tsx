@@ -1,6 +1,6 @@
 'use client';
 
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import type { ReactNode } from 'react';
 import { hoverPanel, POP } from '@/lib/motion';
 import { useHoverOpen } from '@/lib/use-hover-open';
@@ -24,7 +24,7 @@ export function Tooltip({
 
       <AnimatePresence>
         {open && (
-          <motion.span
+          <m.span
             role="tooltip"
             variants={hoverPanel}
             initial="hidden"
@@ -43,7 +43,7 @@ export function Tooltip({
               className="bg-surface-invert absolute -top-1 left-1/2 size-2.5 -translate-x-1/2 rotate-45 rounded-[2px]"
             />
             <span className="relative">{label}</span>
-          </motion.span>
+          </m.span>
         )}
       </AnimatePresence>
     </span>

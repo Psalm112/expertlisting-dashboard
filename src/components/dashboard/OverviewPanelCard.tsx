@@ -14,7 +14,7 @@ export function OverviewPanelCard({ panel }: { panel: OverviewPanel }) {
   const Icon = HEADER_ICON[panel.icon];
 
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
         <h2 className="text-ink-title flex min-w-0 items-center gap-2.5 text-base font-medium">
           <Icon className="text-data-blue size-6 shrink-0" />
