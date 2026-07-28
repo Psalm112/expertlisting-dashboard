@@ -70,11 +70,6 @@ export const SALES_SERIES: SalesSeries[] = [
   { key: 'payout', label: 'Payout', tone: 'red' },
 ];
 
-/** Y axis runs 0-50m; Jun's MRR bar deliberately overshoots, as in the design. */
-export const SALES_AXIS_MAX = 50;
-
-export const SALES_TICKS = [50, 40, 30, 20, 10, 0];
-
 /** Values in millions of naira, derived from the bar heights in the Figma file. */
 export const SALES_DATA: Record<string, SalesPoint[]> = {
   year: [

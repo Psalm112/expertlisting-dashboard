@@ -1,49 +1,76 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Bar, BarChart, Cell, XAxis, YAxis } from 'recharts';
 import { CarouselArrow } from '@/components/ui/CarouselArrow';
-import { SALES_AXIS_MAX, SALES_SERIES, SALES_TICKS } from '@/lib/mock-data';
+import { SALES_SERIES } from '@/lib/mock-data';
+import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import type { SalesPoint } from '@/lib/types';
 import { cn } from '@/lib/cn';
 
 /**
- * Grouped bar chart, hand-built rather than pulled from a charting library.
- *
- * The design needs exactly one chart type with fixed geometry (4px bars, 3px
- * apart, 18px between groups) and no axes, grid or legend. Recharts or similar
- * would add ~90 KB to render markup we can express in a few divs, and would
- * fight the pixel spacing rather than help it.
- *
- * Geometry comes straight from the Figma frame: the 0-50m axis spans 130px, and
- * bars are free to overshoot it, as June's does in the source design.
+ * Geometry is taken from the Figma frame rather than left to the library.
+ * Bars are 4px, 3px apart inside a group, with 18px between groups, which makes
+ * each category band 36px. Sizing the chart to `bands x 36` holds Recharts to
+ * those numbers instead of stretching them to fill the container.
  */
+const BAR_SIZE = 4;
+const BAR_GAP = 3;
+const CATEGORY_GAP = 18;
+const BAND = BAR_SIZE * 3 + BAR_GAP * 2 + CATEGORY_GAP;
+const Y_AXIS_WIDTH = 28;
+const X_AXIS_HEIGHT = 22;
 
-/** Pixels per million naira, from the Figma axis. */
-const SCALE = 130 / SALES_AXIS_MAX;
-/** Bar area height, leaving headroom for the overshooting bar. */
-const PLOT_HEIGHT = 150;
-/** Breathing room above the bars. */
-const PLOT_GUTTER = 36;
-/** Keeps the readout from hanging off the side of the card. */
-const TOOLTIP_MARGIN = 64;
+/**
+ * The axis is labelled to 50m but June's MRR bar runs past it, as in the design.
+ * Rendering against a 55m domain over 143px puts the 50m label at 130px and that
+ * bar at 136px, which is what the frame measures.
+ */
+const RENDER_MAX = 55;
+const PLOT_HEIGHT = 143;
+const TICKS = [0, 10, 20, 30, 40, 50];
 
-const TONE: Record<string, string> = {
-  blue: 'bg-data-blue',
-  green: 'bg-data-green',
-  red: 'bg-data-red',
+/** Room above the plot for the hover readout. */
+const READOUT_GUTTER = 36;
+const READOUT_MARGIN = 64;
+const DIMMED = 0.45;
+
+const TONE: Record<string, { fill: string; dot: string }> = {
+  blue: { fill: 'var(--color-data-blue)', dot: 'bg-data-blue' },
+  green: { fill: 'var(--color-data-green)', dot: 'bg-data-green' },
+  red: { fill: 'var(--color-data-red)', dot: 'bg-data-red' },
 };
 
+const AXIS_TICK = { fill: 'var(--color-ink-faint)', fontSize: 10 };
+
 const formatValue = (value: number) => `₦${value.toFixed(1)}m`;
+const formatTick = (value: number) => (value === 0 ? '0' : `${value}m`);
+
+interface Hover {
+  index: number;
+  /** Offset within the plot wrapper, already clamped to stay on the card. */
+  x: number;
+}
 
 export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabel: string }) {
-  const scroller = useRef<HTMLDivElement>(null);
   const plot = useRef<HTMLDivElement>(null);
+  const scroller = useRef<HTMLDivElement>(null);
+  const chart = useRef<HTMLDivElement>(null);
+
   const [overflow, setOverflow] = useState({ left: false, right: false });
-  const [hover, setHover] = useState<{ index: number; x: number } | null>(null);
+  const [hover, setHover] = useState<Hover | null>(null);
+  const reducedMotion = usePrefersReducedMotion();
+
+  const series = useMemo(
+    () => data.map((point) => ({ month: point.month, ...point.values })),
+    [data],
+  );
+  const chartWidth = Y_AXIS_WIDTH + BAND * data.length;
 
   const sync = useCallback(() => {
     const node = scroller.current;
     if (!node) return;
+
     setOverflow({
       left: node.scrollLeft > 1,
       right: node.scrollLeft + node.clientWidth < node.scrollWidth - 1,
@@ -56,8 +83,6 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
 
     const onScroll = () => {
       sync();
-      // The readout is positioned against the plot, so drop it while scrolling
-      // rather than let it drift away from its bar group.
       setHover(null);
     };
 
@@ -79,19 +104,29 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
   };
 
   /**
-   * The readout lives outside the scroll container. A horizontally scrollable
-   * element cannot also overflow visibly on the vertical axis, so a tooltip
-   * rendered inside it gets clipped at the top of the plot.
+   * Bands are a fixed width, so the hovered index is arithmetic rather than a
+   * reach into Recharts' internal tooltip state. The readout is positioned
+   * against the plot wrapper because a horizontally scrolling element cannot
+   * also overflow visibly on the vertical axis, and anything rendered inside it
+   * gets clipped at the top of the plot.
    */
-  const showReadout = (index: number, group: HTMLElement) => {
-    const bounds = plot.current?.getBoundingClientRect();
-    if (!bounds) return;
+  const track = (clientX: number) => {
+    const chartBox = chart.current?.getBoundingClientRect();
+    const plotBox = plot.current?.getBoundingClientRect();
+    if (!chartBox || !plotBox) return;
 
-    const rect = group.getBoundingClientRect();
-    const centre = rect.left + rect.width / 2 - bounds.left;
-    const clamped = Math.min(Math.max(centre, TOOLTIP_MARGIN), bounds.width - TOOLTIP_MARGIN);
+    const index = Math.floor((clientX - chartBox.left - Y_AXIS_WIDTH) / BAND);
+    if (index < 0 || index >= data.length) {
+      setHover(null);
+      return;
+    }
 
-    setHover({ index, x: clamped });
+    const centre = chartBox.left - plotBox.left + Y_AXIS_WIDTH + index * BAND + BAND / 2;
+
+    setHover({
+      index,
+      x: Math.min(Math.max(centre, READOUT_MARGIN), plotBox.width - READOUT_MARGIN),
+    });
   };
 
   const active = hover ? data[hover.index] : null;
@@ -107,119 +142,96 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
           className="mt-16 shrink-0"
         />
 
-        <div className="flex min-w-0 flex-1 gap-3">
-          {/* Value axis. Labels sit on the same scale as the bars. */}
-          <div aria-hidden className="relative w-7 shrink-0" style={{ height: PLOT_HEIGHT }}>
-            {SALES_TICKS.map((tick) => (
-              <span
-                key={tick}
-                className="absolute right-0 translate-y-1/2 text-2xs text-ink-faint tabular-nums"
-                style={{ bottom: tick * SCALE }}
+        <div ref={plot} className="relative min-w-0 flex-1">
+          <div
+            ref={scroller}
+            className={cn(
+              'overflow-x-auto overflow-y-hidden',
+              '[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden',
+            )}
+            style={{ paddingTop: READOUT_GUTTER }}
+            onPointerMove={(event) => track(event.clientX)}
+            onPointerLeave={() => setHover(null)}
+          >
+            <div ref={chart} className="mx-auto w-max">
+              <BarChart
+                width={chartWidth}
+                height={PLOT_HEIGHT + X_AXIS_HEIGHT}
+                data={series}
+                margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+                barSize={BAR_SIZE}
+                barGap={BAR_GAP}
+                barCategoryGap={CATEGORY_GAP}
               >
-                {tick === 0 ? '0' : `${tick}m`}
-              </span>
-            ))}
-          </div>
+                <YAxis
+                  width={Y_AXIS_WIDTH}
+                  domain={[0, RENDER_MAX]}
+                  ticks={TICKS}
+                  tickFormatter={formatTick}
+                  tick={AXIS_TICK}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <XAxis
+                  dataKey="month"
+                  height={X_AXIS_HEIGHT}
+                  tick={{ ...AXIS_TICK, fontWeight: 500 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
 
-          <div ref={plot} className="relative min-w-0 flex-1">
-            {/* Plot. Scrolls horizontally when the card is narrower than the series. */}
-            <div
-              ref={scroller}
-              className={cn(
-                'overflow-x-auto overflow-y-hidden',
-                '[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
-              )}
-              style={{ paddingTop: PLOT_GUTTER }}
-              onMouseLeave={() => setHover(null)}
-            >
-              {/*
-                `mx-auto` centres the series when the card is wider than the
-                306px it needs. Once the content overflows the auto margins
-                resolve to zero, so nothing gets pushed out of reach.
-              */}
-              <div
-                className="mx-auto flex w-max items-end gap-[18px]"
-                style={{ height: PLOT_HEIGHT }}
-              >
-                {data.map((point, index) => (
-                  <div
-                    key={point.month}
-                    className="flex h-full items-end gap-[3px]"
-                    tabIndex={0}
-                    onMouseEnter={(event) => showReadout(index, event.currentTarget)}
-                    onFocus={(event) => showReadout(index, event.currentTarget)}
-                    onBlur={() => setHover(null)}
-                    aria-label={`${point.month}: ${SALES_SERIES.map(
-                      (series) => `${series.label} ${formatValue(point.values[series.key])}`,
-                    ).join(', ')}`}
+                {SALES_SERIES.map((entry) => (
+                  <Bar
+                    key={entry.key}
+                    dataKey={entry.key}
+                    fill={TONE[entry.tone].fill}
+                    radius={1}
+                    isAnimationActive={!reducedMotion}
+                    animationDuration={520}
                   >
-                    {SALES_SERIES.map((series) => (
-                      <div
-                        key={series.key}
-                        className={cn(
-                          'w-1 rounded-[1px] transition-opacity duration-150',
-                          TONE[series.tone],
-                          hover && hover.index !== index && 'opacity-45',
-                        )}
-                        style={{ height: Math.max(2, point.values[series.key] * SCALE) }}
+                    {data.map((point, index) => (
+                      <Cell
+                        key={point.month}
+                        fillOpacity={hover && hover.index !== index ? DIMMED : 1}
                       />
                     ))}
-                  </div>
+                  </Bar>
                 ))}
-              </div>
-
-              {/* Category axis, aligned to the bar groups. */}
-              <div className="mx-auto mt-2.5 flex w-max gap-[18px]">
-                {data.map((point, index) => (
-                  <span
-                    key={point.month}
-                    className={cn(
-                      'w-[18px] text-center text-2xs font-medium transition-colors duration-150',
-                      hover?.index === index ? 'text-ink-strong' : 'text-ink-faint',
-                    )}
-                  >
-                    {point.month}
-                  </span>
-                ))}
-              </div>
+              </BarChart>
             </div>
-
-            {/* Soft edge showing there is more chart out of view.
-                The design draws this as a hard white panel because it sits past
-                the final bar; as a live scroll affordance a gradient reads better
-                and never hides a bar outright. */}
-            <div
-              aria-hidden
-              className={cn(
-                'pointer-events-none absolute right-0 w-10 transition-opacity duration-200',
-                'bg-gradient-to-l from-surface via-surface/85 to-transparent',
-                overflow.right ? 'opacity-100' : 'opacity-0',
-              )}
-              style={{ top: PLOT_GUTTER, height: PLOT_HEIGHT }}
-            />
-
-            {active && hover && (
-              <div
-                role="tooltip"
-                className={cn(
-                  'pointer-events-none absolute z-30 -translate-x-1/2 -translate-y-full',
-                  'rounded-md bg-surface-invert px-2.5 py-1.5 whitespace-nowrap text-white shadow-lg',
-                  'motion-safe:animate-[fade-up_140ms_ease-out]',
-                )}
-                style={{ left: hover.x, top: PLOT_GUTTER - 8 }}
-              >
-                <p className="text-2xs font-medium text-white/70">{active.month}</p>
-                <ul className="mt-0.5 space-y-0.5">
-                  {SALES_SERIES.map((series) => (
-                    <li key={series.key} className="flex items-center gap-1.5 text-2xs">
-                      <span className={cn('size-1.5 rounded-full', TONE[series.tone])} />
-                      {formatValue(active.values[series.key])}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </div>
+
+          <div
+            aria-hidden
+            className={cn(
+              'pointer-events-none absolute right-0 w-10 transition-opacity duration-200',
+              'from-surface via-surface/85 bg-gradient-to-l to-transparent',
+              overflow.right ? 'opacity-100' : 'opacity-0',
+            )}
+            style={{ top: READOUT_GUTTER, height: PLOT_HEIGHT }}
+          />
+
+          {active && hover && (
+            <div
+              role="tooltip"
+              className={cn(
+                'pointer-events-none absolute z-30 -translate-x-1/2 -translate-y-full',
+                'bg-surface-invert rounded-md px-2.5 py-1.5 whitespace-nowrap text-white shadow-lg',
+                'motion-safe:animate-[fade-up_140ms_ease-out]',
+              )}
+              style={{ left: hover.x, top: READOUT_GUTTER - 8 }}
+            >
+              <p className="text-2xs font-medium text-white/70">{active.month}</p>
+              <ul className="mt-0.5 space-y-0.5">
+                {SALES_SERIES.map((entry) => (
+                  <li key={entry.key} className="text-2xs flex items-center gap-1.5">
+                    <span className={cn('size-1.5 rounded-full', TONE[entry.tone].dot)} />
+                    {formatValue(active.values[entry.key])}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         <CarouselArrow
@@ -231,15 +243,14 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
         />
       </div>
 
-      {/* Non-visual equivalent of the chart. */}
       <table className="sr-only">
         <caption>Sales overview, {rangeLabel}</caption>
         <thead>
           <tr>
             <th scope="col">Period</th>
-            {SALES_SERIES.map((series) => (
-              <th key={series.key} scope="col">
-                {series.label}
+            {SALES_SERIES.map((entry) => (
+              <th key={entry.key} scope="col">
+                {entry.label}
               </th>
             ))}
           </tr>
@@ -248,8 +259,8 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
           {data.map((point) => (
             <tr key={point.month}>
               <th scope="row">{point.month}</th>
-              {SALES_SERIES.map((series) => (
-                <td key={series.key}>{formatValue(point.values[series.key])}</td>
+              {SALES_SERIES.map((entry) => (
+                <td key={entry.key}>{formatValue(point.values[entry.key])}</td>
               ))}
             </tr>
           ))}
