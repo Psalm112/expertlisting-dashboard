@@ -179,6 +179,13 @@ Beyond that:
   in the nav felt worse than an honest empty state, and it shows the shell works
   across routes.
 
+Two more things worth flagging. The masthead icons carry hover tooltips
+(Engagement, Search Activity, Waitlist, Payout Center, Marketplace) whose labels
+differ from the Figma layer names, and the avatar opens a light card with the
+user's name and email. The wallet tooltip reads "Payoout Center" in the file; I
+shipped the correct spelling, since reproducing the typo would look like my
+mistake rather than a faithful copy.
+
 ## Accessibility
 
 Semantic landmarks, a skip link, and `aria-current="page"` on the active tab.

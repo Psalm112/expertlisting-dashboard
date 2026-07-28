@@ -168,8 +168,28 @@ Reading the two destination variants gives their fills:
   which is why selecting All Listings changes the picture. That variant also
   drops the prev/next arrows.
 
-The masthead hover variants could not be exported. They resolve as remote
-components with no local geometry, so the API renders nothing for them.
+The masthead hover variants cannot be exported. They resolve as remote components
+with no local geometry, so the API renders nothing for them. Their content was
+read off the running prototype instead:
+
+| Icon | Tooltip |
+| --- | --- |
+| device-message | Engagement |
+| search-status | Search Activity |
+| document with clock | Waitlist |
+| wallet | Payoout Center |
+| shop | Marketplace |
+
+These labels differ from the Figma layer names, which read "Comments", "Activity
+Log", "Waitlist", "Payout Center" and "Marketplace". The tooltip text wins, since
+that is what a user sees.
+
+Each tooltip is a dark rounded panel below the icon with a caret pointing up at
+it. The avatar is different: it opens a light panel showing "Dylan Frank" over
+"dylanfran96@gmail.com", anchored to the avatar's right edge.
+
+That resolves the hidden name layer sitting beside the avatar in the base frame.
+It belongs to this hover card, not to the resting state.
 
 ### Stacked image fills
 
@@ -237,11 +257,13 @@ All of these are deliberate.
 8. **The most watchlisted card's arrows are dropped.** The frame draws prev/next
    arrows, but that card holds a single photograph, so there is nothing to step
    between. Arrows appear only where a view has more than one image.
-9. **The masthead hover artwork could not be reproduced.** The prototype swaps
-   each icon and the avatar to a second variant on hover over 300ms. Those
-   variants are remote components with no local geometry, so the API renders
-   nothing for them. The build keeps the 300ms timing with a scale and colour
-   response instead of inventing a second icon set.
+9. **The wallet tooltip's spelling is corrected.** The prototype reads "Payoout
+   Center". Shipped as "Payout Center", since reproducing the typo would read as
+   a mistake in the build rather than a faithful copy.
+10. **The masthead wordmark collapses to its glyph below 640.** The design has no
+    small viewport, and at 375 the full wordmark leaves no room for the five
+    quick actions. Dropping to the glyph frees roughly 150px and keeps all five
+    reachable at every width.
 
 ## Responsive behaviour
 
