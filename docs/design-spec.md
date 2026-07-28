@@ -171,16 +171,38 @@ Reading the two destination variants gives their fills:
 The masthead hover variants could not be exported. They resolve as remote
 components with no local geometry, so the API renders nothing for them.
 
-### About the unused image
+### Stacked image fills
 
-The file holds 44 image fills; only 5 are reachable from the Dashboard frame.
-One of those, `5cf13f962e`, is stacked *underneath* `0a37afeb3f` on the same
-rectangle in the most clicked card. Figma paints later fills on top, and the
-upper one is opaque, so `5cf13f962e` never renders. The same pattern appears in
-the All Listings variant, where `ece298d0` sits under `0e2748145f`.
+The file holds 44 image fills; 5 are reachable from the Dashboard frame. Two of
+the card rectangles carry more than one image fill:
 
-Both are leftovers. They are not shipped, and `scripts/optimize-images.mjs` skips
-them explicitly rather than silently.
+| Rectangle | Fills, bottom to top | Reading |
+| --- | --- | --- |
+| Most clicked, Live Listings | `5cf13f962e` (FILL), `0a37afeb3f` (STRETCH) | two photographs of the same listing |
+| Most clicked, All Listings | `ece298d0` (FILL), `0e2748145f` (STRETCH) | one photograph over an empty placeholder |
+
+Stacking fills on a single rectangle is how the second photograph is stored. Only
+the top one is visible on the static board, but both are real images and the
+prev/next arrows step between them. `5cf13f962e` is a 2500x1557 photograph and
+ships as `most-clicked-2.webp`.
+
+`ece298d0` is different. It is a 256x256 fully transparent PNG, so there is
+nothing behind the All Listings photograph. That is why that view has a single
+image and no arrows.
+
+### Arrows against the badge
+
+These are two separate controls and the design keeps them apart:
+
+* The **badge**, and the dots beneath it, choose a view: Live Listings or All
+  Listings. Each view has its own caption and its own photographs.
+* The **arrows** step through the photographs inside the selected view. They
+  appear only where a view holds more than one, which is why they are drawn on
+  the most clicked card's Live Listings state and absent from its All Listings
+  state.
+
+The most watchlisted card has one photograph and nothing behind its other badge
+option, so that option and its dot render disabled.
 
 ## Deviations from the source
 
@@ -212,9 +234,14 @@ All of these are deliberate.
 7. **The All Listings swap gets a 220ms fade.** The prototype sets no transition
    on that click, so it would be instant. A short fade matches the 300ms the rest
    of the file uses and avoids a hard cut.
-8. **The most watchlisted card's second state is invented.** That card is a
-   detached frame in the file with no prototype wiring, so its badge has nothing
-   to switch to. It swaps caption only and keeps its photograph.
+8. **The most watchlisted card's arrows are dropped.** The frame draws prev/next
+   arrows, but that card holds a single photograph, so there is nothing to step
+   between. Arrows appear only where a view has more than one image.
+9. **The masthead hover artwork could not be reproduced.** The prototype swaps
+   each icon and the avatar to a second variant on hover over 300ms. Those
+   variants are remote components with no local geometry, so the API renders
+   nothing for them. The build keeps the 300ms timing with a scale and colour
+   response instead of inventing a second icon set.
 
 ## Responsive behaviour
 
