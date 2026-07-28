@@ -267,16 +267,23 @@ All of these are deliberate.
 
 ## Responsive behaviour
 
-Derived, since the file only specifies 1440.
+Derived, since the file only specifies 1440. Verified down to 320 with no
+horizontal overflow at any width.
 
-| Breakpoint    | Layout                                                                                               |
-| ------------- | ---------------------------------------------------------------------------------------------------- |
-| under 640     | Single column throughout. Masthead trims to 64px and keeps two quick actions. Stat tiles stack.      |
-| 640 to 959    | Photo cards go two up, stat tiles go two up. The chart sits above the tiles and centres in its card. |
-| 960 to 1023   | Chart and stat tiles move side by side inside the sales card.                                        |
-| 1024 to 1359  | Photo cards go three up.                                                                             |
-| 1360 and over | Sales card and overview column sit side by side, the sales card at its designed 857px.               |
-| 1440          | Matches the Figma frame.                                                                             |
+The chart tracks its container rather than being pinned to a fixed size. Bars stay
+4px throughout and only the gap between groups flexes; once a band would fall
+below 30px the arrows page through the months instead of letting the bars crowd.
+At 1440 that lands on the design's 36px band exactly, and at 320 it shows five
+months at a time.
+
+| Breakpoint    | Layout                                                                                                                                                                                  |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| under 640     | Single column throughout. Masthead trims to 64px, the wordmark drops to its glyph so all five quick actions still fit, and their buttons grow to a 40px touch target. Stat tiles stack. |
+| 640 to 959    | Photo cards go two up, stat tiles go two up. The chart sits above the tiles.                                                                                                            |
+| 960 to 1023   | Chart and stat tiles move side by side inside the sales card.                                                                                                                           |
+| 1024 to 1359  | Photo cards go three up.                                                                                                                                                                |
+| 1360 and over | Sales card and overview column sit side by side, the sales card at its designed 857px.                                                                                                  |
+| 1440          | Matches the Figma frame.                                                                                                                                                                |
 
 The 1360 figure is not arbitrary. The design's content column is 1284 wide with
 78px gutters, so 1360 is the first width where the two column split can give the

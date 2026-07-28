@@ -45,22 +45,32 @@ Tailwind v4, with the design's values defined as tokens in an `@theme` block
 instead of scattered around as arbitrary values. So `text-ink-muted` and
 `rounded-card` mean something specific, and there's one place to change them.
 
-**Recharts** for the sales chart. It is the one heavy dependency here, so it is
-loaded through `next/dynamic` behind a skeleton of the same footprint. That puts
-it in its own chunk instead of the initial bundle, and nothing shifts while it
-arrives.
+**Recharts** for the sales chart, on a `ResponsiveContainer` so it tracks its card
+at any width. It is the heaviest dependency here, so it loads through
+`next/dynamic` behind a skeleton with the same footprint. That keeps it out of the
+initial bundle and stops the card resizing when it arrives.
 
-The design pins the chart's geometry (4px bars, 3px apart, 18px between groups,
-a 0 to 50m axis that June's bar deliberately overshoots), so I gave Recharts a
-fixed size of `bands x 36px` rather than a `ResponsiveContainer`. That holds it to
-those numbers instead of stretching the bands to fill whatever width it is given.
-Verified in the browser: 4px bars, 36px pitch, 130px between the 0 and 50m ticks,
-tallest bar 136px, all matching the frame.
+Bars stay 4px at every width. Only the gap between groups flexes, derived from the
+measured band, and once that band would fall below 30px the arrows start paging
+through the months rather than letting the bars crowd. That is also what makes the
+arrows mean something: the design draws them as a disabled and enabled pair, and
+here they genuinely are.
+
+Measured at 1440: 4px bars, 36px pitch, 130px between the 0 and 50m ticks, tallest
+bar 136px, all matching the frame. At 320 it shows five months at a time with the
+bars still 4px.
+
+**Framer Motion** for the interaction layer, wrapped once in
+`MotionConfig reducedMotion="user"` so every animation honours the OS setting from
+a single place. It earns its keep on the shared-element transitions: the active
+pill slides between nav tabs and between the 1 Week / 1 Month / 1 Year options via
+`layoutId`, and the yellow dot slides between Live and All Listings. Those are
+genuinely awkward in CSS. It also runs the hover panels, the caption swaps and the
+section reveals.
 
 ### What I left out
 
-The brief said keep it lightweight, so every other dependency had to argue for
-itself, and none of them managed it.
+The brief said keep it lightweight, so the rest had to argue for itself.
 
 No icon package. All 21 icons come out of the Figma file itself, exported
 through the REST API and generated into inline components in
@@ -91,13 +101,16 @@ src/
 │  ├─ icons/               generated from Figma, plus a key to component registry
 │  ├─ layout/              Masthead, PrimaryNav, SiteHeader, ChatButton
 │  ├─ ui/                  Card, StatBlock, SegmentedControl, PillButton,
-│  │                       DeltaBadge, CarouselArrow, ProgressDots,
-│  │                       FilterBadge, Tooltip
+│  │                       IconButton, CarouselArrow, DeltaBadge, ProgressDots,
+│  │                       FilterBadge, Tooltip, Reveal
 │  └─ dashboard/           SalesOverviewCard, SalesChart, ChartSkeleton,
 │                          SalesMetricTile, OverviewPanelCard, MetricPhotoCard
 ├─ lib/
 │  ├─ types.ts             data contracts
 │  ├─ mock-data.ts         fixtures
+│  ├─ motion.ts            shared easing, springs and variants
+│  ├─ use-element-width.ts
+│  ├─ use-hover-open.ts
 │  ├─ use-prefers-reduced-motion.ts
 │  └─ cn.ts
 └─ assets/                 subset fonts and optimised photography
@@ -217,9 +230,9 @@ rings are visible, and `prefers-reduced-motion` is respected.
 Every route is statically prerendered. Seven components opt into the client, plus
 two hooks, and each of them holds real state or reads a media query.
 
-Recharts is the only large dependency, so it is dynamically imported and lands in
-its own chunk rather than the initial bundle. The skeleton behind it occupies the
-same box, so the card does not resize when the chart arrives.
+Recharts is the largest dependency, so it is dynamically imported and lands in its
+own chunk rather than the initial bundle. The skeleton behind it occupies the same
+box, so the card does not resize when the chart arrives.
 
 Open Runde subsets from 471 KB down to 67 KB across the three weights, self-hosted
 with `display: swap` and a metric adjusted fallback so layout shift stays near
