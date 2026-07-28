@@ -42,7 +42,7 @@ export function CarouselArrow({
               'size-[18px] bg-line text-ink-strong hover:bg-line-strong',
               'disabled:bg-surface-sunken disabled:text-ink-faint disabled:hover:bg-surface-sunken',
             ]
-          : 'size-8 bg-black/60 text-white backdrop-blur-[2px] hover:bg-black/75 active:scale-95 disabled:opacity-40',
+          : 'size-8 bg-black/60 text-white hover:bg-black/75 active:scale-95 disabled:opacity-40',
         className,
       )}
       {...props}
