@@ -62,19 +62,19 @@ function ProfileButton() {
       <button
         type="button"
         aria-label={`Account menu for ${CURRENT_USER.name}`}
-        className="grid size-10 shrink-0 place-items-center rounded-full border border-white/50 bg-white text-[1.4375rem]/[1.875rem] font-medium text-brand transition duration-300 ring-inset hover:ring-4 hover:ring-white/30 active:scale-95"
+        className="text-brand grid size-10 shrink-0 place-items-center rounded-full border border-white/50 bg-white text-[1.4375rem]/[1.875rem] font-medium transition duration-300 ring-inset hover:ring-4 hover:ring-white/30 active:scale-95"
       >
         {CURRENT_USER.initial}
       </button>
 
       <div
         role="tooltip"
-        className="pointer-events-none absolute top-full right-0 z-50 mt-2.5 rounded-panel bg-surface-sunken px-4 py-3 text-right opacity-0 shadow-xl transition-opacity duration-200 group-hover/profile:opacity-100 group-focus-within/profile:opacity-100"
+        className="rounded-panel bg-surface-sunken pointer-events-none absolute top-full right-0 z-50 mt-2.5 px-4 py-3 text-right opacity-0 shadow-xl transition-opacity duration-200 group-focus-within/profile:opacity-100 group-hover/profile:opacity-100"
       >
-        <p className="text-md font-semibold whitespace-nowrap text-ink-strong">
+        <p className="text-md text-ink-strong font-semibold whitespace-nowrap">
           {CURRENT_USER.name}
         </p>
-        <p className="mt-0.5 text-sm whitespace-nowrap text-ink-subtle">{CURRENT_USER.email}</p>
+        <p className="text-ink-subtle mt-0.5 text-sm whitespace-nowrap">{CURRENT_USER.email}</p>
       </div>
     </div>
   );

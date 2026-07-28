@@ -6,7 +6,7 @@ export function ViewAllLink({ href, label }: { href: string; label: string }) {
   return (
     <Link
       href={href}
-      className="group inline-flex shrink-0 items-center gap-0.5 rounded-sm text-xs font-medium text-data-blue transition-opacity hover:opacity-70"
+      className="group text-data-blue inline-flex shrink-0 items-center gap-0.5 rounded-sm text-xs font-medium transition-opacity hover:opacity-70"
     >
       View all
       <span className="sr-only"> {label}</span>

@@ -39,7 +39,7 @@ export function CarouselArrow({
         'disabled:cursor-not-allowed',
         isChart
           ? [
-              'size-[18px] bg-line text-ink-strong hover:bg-line-strong',
+              'bg-line text-ink-strong hover:bg-line-strong size-[18px]',
               'disabled:bg-surface-sunken disabled:text-ink-faint disabled:hover:bg-surface-sunken',
             ]
           : 'size-8 bg-black/60 text-white hover:bg-black/75 active:scale-95 disabled:opacity-40',

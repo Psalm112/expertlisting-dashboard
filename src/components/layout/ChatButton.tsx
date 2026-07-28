@@ -12,7 +12,7 @@ export function ChatButton() {
     <button
       type="button"
       aria-label="Open support chat"
-      className="fixed right-5 bottom-5 z-50 grid size-[58px] place-items-center rounded-full border border-white/20 bg-surface-invert text-white shadow-lg transition hover:scale-105 hover:bg-black active:scale-95 md:right-8 md:bottom-8"
+      className="bg-surface-invert fixed right-5 bottom-5 z-50 grid size-[58px] place-items-center rounded-full border border-white/20 text-white shadow-lg transition hover:scale-105 hover:bg-black active:scale-95 md:right-8 md:bottom-8"
     >
       <ChatBubble className="size-6" />
     </button>

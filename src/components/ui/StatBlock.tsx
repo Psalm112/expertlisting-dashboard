@@ -14,8 +14,8 @@ export function StatBlock({
 }) {
   return (
     <div className={cn('flex flex-col gap-2', className)}>
-      <dt className="text-base font-medium text-ink-muted">{label}</dt>
-      <dd className="text-3xl font-semibold text-ink tabular-nums">{value}</dd>
+      <dt className="text-ink-muted text-base font-medium">{label}</dt>
+      <dd className="text-ink text-3xl font-semibold tabular-nums">{value}</dd>
     </div>
   );
 }

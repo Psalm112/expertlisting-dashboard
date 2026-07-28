@@ -1,44 +1,39 @@
 @import 'tailwindcss';
 
-/* ---------------------------------------------------------------------------
-   Design tokens
-   Every value below was read out of the Figma source file via the REST API
-   rather than sampled by eye - see docs/design-spec.md for the mapping from
-   Figma layer to token.
-   --------------------------------------------------------------------------- */
-
+/* Values read out of the Figma file via the REST API rather than sampled by eye.
+   docs/design-spec.md maps each one back to the layer it came from. */
 @theme {
   --font-sans: var(--font-open-runde), ui-sans-serif, system-ui, sans-serif;
 
-  /* Brand ------------------------------------------------------------------ */
+  /* Brand */
   --color-brand: #105b48; /* masthead bar, avatar glyph */
-  --color-brand-accent: #176d58; /* active nav item (text + 15% tint) */
-  --color-brand-deep: #0c5d56; /* "Total Riders' Credit" figure */
+  --color-brand-accent: #176d58; /* active nav item, and its 15% tint */
+  --color-brand-deep: #0c5d56; /* Total Riders' Credit figure */
 
-  /* Data + status ---------------------------------------------------------- */
-  --color-data-blue: #4545fe; /* series 1, "View all" links, Total Inflow */
+  /* Data and status */
+  --color-data-blue: #4545fe; /* series 1, View all, Total Inflow */
   --color-data-green: #12b76a; /* series 2, MRR, positive deltas */
   --color-data-red: #f04438; /* series 3 */
   --color-data-orange: #f97316; /* Payout */
   --color-negative: #dc2626; /* falling delta label */
   --color-highlight: #ffff00; /* headline figures on photo cards */
 
-  /* Surfaces --------------------------------------------------------------- */
+  /* Surfaces */
   --color-canvas: #fbfcfc; /* page background */
   --color-surface: #ffffff; /* cards */
   --color-surface-muted: #f9fafb; /* card header strip */
-  --color-surface-sunken: #f5f5f5; /* selected segment, prev-arrow disc */
-  --color-surface-invert: #242526; /* floating chat button */
+  --color-surface-sunken: #f5f5f5; /* selected segment, disabled arrow */
+  --color-surface-invert: #242526; /* chat button, tooltips */
 
-  /* Lines ------------------------------------------------------------------ */
-  --color-line: #e4e4e4; /* card borders */
-  --color-line-soft: #f4f4f5; /* masthead + nav hairlines */
+  /* Lines */
+  --color-line: #e4e4e4; /* card borders, enabled arrow */
+  --color-line-soft: #f4f4f5; /* masthead and nav hairlines */
   --color-line-faint: #e5e5e5; /* carousel dot border */
-  --color-line-strong: #d6d6d6; /* "View Transactions" outline */
+  --color-line-strong: #d6d6d6; /* View Transactions outline */
 
-  /* Text ------------------------------------------------------------------- */
+  /* Text */
   --color-ink: #141414; /* stat figures */
-  --color-ink-strong: #191919; /* page + card headings */
+  --color-ink-strong: #191919; /* page and card headings */
   --color-ink-title: #292929; /* overview card titles */
   --color-ink-body: #3d3d3d; /* nav labels, tile labels */
   --color-ink-muted: #525252; /* stat headings */
@@ -47,12 +42,12 @@
   --color-ink-on-media: #e4e4e7; /* location line over photos */
   --color-ink-on-media-dim: #d4d4d8; /* inactive badge tab */
 
-  /* Radii ------------------------------------------------------------------ */
+  /* Radii */
   --radius-control: 8px; /* nav pill, segmented control, badge */
   --radius-panel: 12px; /* stat tiles, photo cards */
-  --radius-card: 16px; /* overview + chart cards, carousel discs */
+  --radius-card: 16px; /* overview and chart cards */
 
-  /* Type scale - size / line-height pairs lifted from the Figma text styles - */
+  /* Type scale, lifted from the Figma text styles. Comments are the px values. */
   --text-2xs: 0.625rem; /* 10 */
   --text-2xs--line-height: 0.75rem; /* 12 */
   --text-xs: 0.75rem; /* 12 */
@@ -72,18 +67,10 @@
   --text-2xl--line-height: 1.5rem; /* 24 */
   --text-3xl: 1.5rem; /* 24 */
   --text-3xl--line-height: 2.375rem; /* 38 */
-
-  /* Effects ---------------------------------------------------------------- */
-  --shadow-scroll-fade: -4px 0 12px 0 rgb(0 0 0 / 0.04);
 }
 
-/* ---------------------------------------------------------------------------
-   Page shell
-   At 1440 the design lays content in a 1284px column with 78px gutters. The
-   width formula reproduces that exactly at 1440 and degrades to a fixed gutter
-   on narrower viewports.
-   --------------------------------------------------------------------------- */
-
+/* The design lays content in a 1284px column with 78px gutters at 1440. The
+   width formula reproduces that exactly, and falls back to a fixed gutter below. */
 :root {
   --shell-gutter: 1rem;
 }
@@ -103,15 +90,12 @@
   width: min(100% - (var(--shell-gutter) * 2), 1284px);
 }
 
-/* Two stacked gradients sit over each photo card in the design. */
+/* Each photo card has two stacked gradients in the design, not one. */
 @utility media-scrim {
-  background-image: linear-gradient(to bottom, rgb(0 0 0 / 0.05), rgb(0 0 0 / 0.6)),
+  background-image:
+    linear-gradient(to bottom, rgb(0 0 0 / 0.05), rgb(0 0 0 / 0.6)),
     linear-gradient(to bottom, rgb(0 0 0 / 0.2), rgb(0 0 0 / 0.8));
 }
-
-/* ---------------------------------------------------------------------------
-   Base
-   --------------------------------------------------------------------------- */
 
 @layer base {
   html {
@@ -124,8 +108,8 @@
     font-family: var(--font-sans);
   }
 
-  /* The design has no dark mode, so opt out rather than let the UA invert form
-     controls and scrollbars inconsistently. */
+  /* No dark mode in the design, so opt out rather than let the browser invert
+     form controls and scrollbars on its own. */
   :root {
     color-scheme: only light;
   }
@@ -141,7 +125,6 @@
   }
 }
 
-/* Caption swap on the photo-card carousels. */
 @keyframes fade-up {
   from {
     opacity: 0;

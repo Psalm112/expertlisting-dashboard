@@ -35,7 +35,7 @@ export function ProgressDots({
           onClick={() => onSelect(index)}
           className={cn(
             'size-[7px] rounded-full transition-colors duration-200',
-            index === active && 'border border-line-faint bg-white',
+            index === active && 'border-line-faint border bg-white',
             index !== active && !dot.disabled && 'bg-white/20 hover:bg-white/50',
             index !== active && dot.disabled && 'cursor-not-allowed bg-white/10',
           )}

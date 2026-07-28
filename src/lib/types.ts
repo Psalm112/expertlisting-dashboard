@@ -87,11 +87,7 @@ export interface SalesRange {
 }
 
 export type ListingImage =
-  | 'siteVisits'
-  | 'mostClicked'
-  | 'mostClicked2'
-  | 'mostWatchlisted'
-  | 'listingViews';
+  'siteVisits' | 'mostClicked' | 'mostClicked2' | 'mostWatchlisted' | 'listingViews';
 
 export interface CardPhoto {
   key: ListingImage;

@@ -16,8 +16,8 @@ export function OverviewPanelCard({ panel }: { panel: OverviewPanel }) {
   return (
     <Card>
       <CardHeader>
-        <h2 className="flex min-w-0 items-center gap-2.5 text-base font-medium text-ink-title">
-          <Icon className="size-6 shrink-0 text-data-blue" />
+        <h2 className="text-ink-title flex min-w-0 items-center gap-2.5 text-base font-medium">
+          <Icon className="text-data-blue size-6 shrink-0" />
           <span className="truncate">{panel.title}</span>
         </h2>
 

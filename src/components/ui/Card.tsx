@@ -7,7 +7,7 @@ import { cn } from '@/lib/cn';
  */
 export function Card({ className, children }: { className?: string; children: ReactNode }) {
   return (
-    <section className={cn('rounded-card border border-line bg-surface', className)}>
+    <section className={cn('rounded-card border-line bg-surface border', className)}>
       {children}
     </section>
   );
@@ -17,8 +17,8 @@ export function CardHeader({ className, children }: { className?: string; childr
   return (
     <div
       className={cn(
-        'flex h-[50px] items-center justify-between gap-3 rounded-t-card',
-        'border-b border-line bg-surface-muted px-4',
+        'rounded-t-card flex h-[50px] items-center justify-between gap-3',
+        'border-line bg-surface-muted border-b px-4',
         className,
       )}
     >

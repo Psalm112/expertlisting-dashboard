@@ -63,10 +63,10 @@ export function SegmentedControl({
               }
             }}
             className={cn(
-              'h-[33px] rounded-control px-4 text-base whitespace-nowrap transition-colors duration-150',
+              'rounded-control h-[33px] px-4 text-base whitespace-nowrap transition-colors duration-150',
               selected
-                ? 'bg-surface-sunken font-semibold text-ink-body'
-                : 'font-normal text-ink-body hover:bg-surface-sunken/60',
+                ? 'bg-surface-sunken text-ink-body font-semibold'
+                : 'text-ink-body hover:bg-surface-sunken/60 font-normal',
             )}
           >
             {option.label}

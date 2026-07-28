@@ -14,8 +14,8 @@ export function PillButton({
       type="button"
       className={cn(
         'inline-flex h-[46px] items-center justify-center rounded-full px-6',
-        'border border-line-strong bg-surface text-xs font-medium text-ink-strong',
-        'transition-colors duration-150 hover:border-ink-faint hover:bg-surface-sunken',
+        'border-line-strong bg-surface text-ink-strong border text-xs font-medium',
+        'hover:border-ink-faint hover:bg-surface-sunken transition-colors duration-150',
         'active:bg-line-soft',
         className,
       )}

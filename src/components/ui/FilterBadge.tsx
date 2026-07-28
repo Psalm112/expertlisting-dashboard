@@ -30,7 +30,7 @@ export function FilterBadge({
     <div
       role="radiogroup"
       aria-label={label}
-      className="inline-flex h-[26px] items-center gap-2 rounded-control bg-black/60 px-2"
+      className="rounded-control inline-flex h-[26px] items-center gap-2 bg-black/60 px-2"
     >
       {options.map((option, index) => {
         const selected = index === value;
@@ -52,7 +52,7 @@ export function FilterBadge({
               option.disabled && 'cursor-not-allowed text-white/35',
             )}
           >
-            {selected && <span aria-hidden className="size-1.5 rounded-full bg-highlight" />}
+            {selected && <span aria-hidden className="bg-highlight size-1.5 rounded-full" />}
             {option.label}
           </button>
         );

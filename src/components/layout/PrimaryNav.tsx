@@ -18,14 +18,14 @@ export function PrimaryNav() {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Primary" className="border-b border-line-soft bg-surface">
+    <nav aria-label="Primary" className="border-line-soft bg-surface border-b">
       <div className="shell relative">
         <ul
           className={cn(
             'flex h-14 items-center gap-1 overflow-x-auto scroll-smooth md:h-[67px]',
             'xl:justify-between xl:gap-12 xl:overflow-visible',
             // hide the scrollbar without hiding the overflow
-            '[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+            '[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden',
           )}
         >
           {NAV_ITEMS.map((item) => {
@@ -38,11 +38,11 @@ export function PrimaryNav() {
                   href={item.href}
                   aria-current={active ? 'page' : undefined}
                   className={cn(
-                    'flex h-[38px] items-center justify-center gap-2 rounded-control px-5',
+                    'rounded-control flex h-[38px] items-center justify-center gap-2 px-5',
                     'text-base whitespace-nowrap transition-colors duration-150',
                     active
-                      ? 'bg-brand-accent/15 font-semibold text-brand-accent'
-                      : 'font-normal text-ink-body hover:bg-surface-sunken',
+                      ? 'bg-brand-accent/15 text-brand-accent font-semibold'
+                      : 'text-ink-body hover:bg-surface-sunken font-normal',
                   )}
                 >
                   <Icon className="size-6 shrink-0" />
@@ -56,7 +56,7 @@ export function PrimaryNav() {
         {/* Fade hints that the strip scrolls, on the breakpoints where it does. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-surface to-transparent xl:hidden"
+          className="from-surface pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l to-transparent xl:hidden"
         />
       </div>
     </nav>
