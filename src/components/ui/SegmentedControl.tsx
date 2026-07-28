@@ -1,6 +1,8 @@
 'use client';
 
 import { useRef } from 'react';
+import { motion } from 'framer-motion';
+import { SPRING } from '@/lib/motion';
 import { cn } from '@/lib/cn';
 
 interface Option {
@@ -9,10 +11,8 @@ interface Option {
 }
 
 /**
- * The 1 Week / 1 Month / 1 Year switch above the sales chart.
- *
- * Implemented with radio semantics plus roving focus so it behaves like the
- * single-choice control it looks like: one tab stop, arrow keys to move.
+ * Single-choice switch with radio semantics and roving focus: one tab stop,
+ * arrow keys to move between options.
  */
 export function SegmentedControl({
   options,
@@ -63,13 +63,19 @@ export function SegmentedControl({
               }
             }}
             className={cn(
-              'rounded-control h-[33px] px-4 text-base whitespace-nowrap transition-colors duration-150',
-              selected
-                ? 'bg-surface-sunken text-ink-body font-semibold'
-                : 'text-ink-body hover:bg-surface-sunken/60 font-normal',
+              'rounded-control text-ink-body relative h-[33px] px-4 text-base whitespace-nowrap',
+              'transition-colors duration-150',
+              selected ? 'font-semibold' : 'hover:bg-surface-sunken/60 font-normal',
             )}
           >
-            {option.label}
+            {selected && (
+              <motion.span
+                layoutId="sales-range-pill"
+                transition={SPRING}
+                className="bg-surface-sunken rounded-control absolute inset-0"
+              />
+            )}
+            <span className="relative">{option.label}</span>
           </button>
         );
       })}

@@ -1,5 +1,7 @@
 'use client';
 
+import { motion } from 'framer-motion';
+import { SPRING } from '@/lib/motion';
 import { cn } from '@/lib/cn';
 
 export interface FilterOption {
@@ -9,8 +11,13 @@ export interface FilterOption {
 }
 
 /**
- * Live Listings / All Listings switch floating over the photo cards.
- * The selected option is marked by a yellow dot as well as colour.
+ * Live Listings / All Listings switch floating over the photo cards. The
+ * selected option is marked by a yellow dot as well as colour, and the dot
+ * slides between options rather than jumping.
+ *
+ * Deliberately no backdrop blur. The design specifies a flat 60% black fill, and
+ * a backdrop-filter draws a visible seam between the two buttons in Chrome
+ * because each one composites its own backdrop.
  */
 export function FilterBadge({
   options,
@@ -23,9 +30,6 @@ export function FilterBadge({
   onChange: (index: number) => void;
   label: string;
 }) {
-  // Deliberately no backdrop blur. The design specifies a flat 60% black fill,
-  // and a backdrop-filter draws a visible seam between the two buttons in Chrome
-  // because each one composites its own backdrop.
   return (
     <div
       role="radiogroup"
@@ -52,7 +56,14 @@ export function FilterBadge({
               option.disabled && 'cursor-not-allowed text-white/35',
             )}
           >
-            {selected && <span aria-hidden className="bg-highlight size-1.5 rounded-full" />}
+            {selected && (
+              <motion.span
+                aria-hidden
+                layoutId={`filter-dot-${label}`}
+                transition={SPRING}
+                className="bg-highlight size-1.5 rounded-full"
+              />
+            )}
             {option.label}
           </button>
         );

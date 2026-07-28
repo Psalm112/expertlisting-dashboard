@@ -1,5 +1,7 @@
 'use client';
 
+import { motion } from 'framer-motion';
+import { SPRING } from '@/lib/motion';
 import { cn } from '@/lib/cn';
 
 export interface Dot {
@@ -34,12 +36,19 @@ export function ProgressDots({
           disabled={dot.disabled}
           onClick={() => onSelect(index)}
           className={cn(
-            'size-[7px] rounded-full transition-colors duration-200',
-            index === active && 'border-line-faint border bg-white',
+            'relative size-[7px] rounded-full transition-colors duration-200',
             index !== active && !dot.disabled && 'bg-white/20 hover:bg-white/50',
             index !== active && dot.disabled && 'cursor-not-allowed bg-white/10',
           )}
-        />
+        >
+          {index === active && (
+            <motion.span
+              layoutId={`dots-${label}`}
+              transition={SPRING}
+              className="border-line-faint absolute inset-0 rounded-full border bg-white"
+            />
+          )}
+        </button>
       ))}
     </div>
   );
