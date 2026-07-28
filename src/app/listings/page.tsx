@@ -1,6 +1,6 @@
-﻿import { PlaceholderPage } from '@/components/layout/PlaceholderPage';
+import { PlaceholderPage } from '@/components/layout/PlaceholderPage';
 
-export const metadata = { title: 'Listings | Expert Listing' };
+export const metadata = { title: 'Listings' };
 
 export default function ListingsPage() {
   return (

@@ -1,6 +1,6 @@
-﻿import { PlaceholderPage } from '@/components/layout/PlaceholderPage';
+import { PlaceholderPage } from '@/components/layout/PlaceholderPage';
 
-export const metadata = { title: 'Users | Expert Listing' };
+export const metadata = { title: 'Users' };
 
 export default function UsersPage() {
   return (
