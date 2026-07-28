@@ -1,8 +1,4 @@
-// AUTO-GENERATED from the Figma source file - do not edit by hand.
-// Exported via the Figma REST API, recoloured to `currentColor` so icons inherit
-// text colour. Kept inline (rather than pulling in an icon package) to stay exact
-// to the design and to avoid shipping an icon dependency.
-
+// GENERATED from the downloaded icons from Figma file - do not edit by hand.
 import type { SVGProps } from 'react';
 
 export type IconProps = SVGProps<SVGSVGElement>;

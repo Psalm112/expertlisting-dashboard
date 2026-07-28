@@ -6,7 +6,6 @@ import { hoverPanel, POP } from '@/lib/motion';
 import { useHoverOpen } from '@/lib/use-hover-open';
 import { cn } from '@/lib/cn';
 
-/** The dark label the prototype shows under each masthead icon on hover. */
 export function Tooltip({
   label,
   children,

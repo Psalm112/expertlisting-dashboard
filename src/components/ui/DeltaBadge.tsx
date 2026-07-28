@@ -2,12 +2,7 @@ import { DeltaDown, DeltaUp } from '@/components/icons';
 import type { Trend } from '@/lib/types';
 import { cn } from '@/lib/cn';
 
-/**
- * Period-over-period change next to a sales figure.
- *
- * The arrow is decorative; direction is carried in the visually-hidden text so
- * it is not conveyed by colour and shape alone.
- */
+
 export function DeltaBadge({ value, trend }: { value: string; trend: Trend }) {
   const Icon = trend === 'up' ? DeltaUp : DeltaDown;
 

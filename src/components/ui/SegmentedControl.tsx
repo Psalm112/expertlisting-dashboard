@@ -10,10 +10,7 @@ interface Option {
   label: string;
 }
 
-/**
- * Single-choice switch with radio semantics and roving focus: one tab stop,
- * arrow keys to move between options.
- */
+
 export function SegmentedControl({
   options,
   value,

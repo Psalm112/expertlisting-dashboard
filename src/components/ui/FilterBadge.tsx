@@ -15,8 +15,7 @@ export interface FilterOption {
  * Live Listings / All Listings switch floating over the photo cards.
  *
  * The selected option is marked by a yellow dot as well as colour, and the dot
- * slides between options rather than jumping. Options are separated by the
- * hairline the design draws between them (`Line 164`, 1px at 16% white).
+ * slides between options rather than jumping.
  *
  * Deliberately no backdrop blur: the design specifies a flat 60% black fill.
  */

@@ -11,10 +11,7 @@ type Props = {
   children: ReactNode;
 } & Omit<ComponentProps<typeof m.button>, 'children'>;
 
-/**
- * Icon-only button with a consistent press response. Sizing is left to the
- * caller so the same component covers the masthead, cards and overlays.
- */
+
 export function IconButton({ label, children, className, ...props }: Props) {
   return (
     <m.button

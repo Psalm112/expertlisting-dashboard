@@ -8,12 +8,7 @@ interface Options {
   onTick: () => void;
 }
 
-/**
- * Fires `onTick` on an interval while `enabled`.
- *
- * The callback is held in a ref so changing it does not restart the timer, which
- * would otherwise reset the countdown on every render.
- */
+
 export function useAutoAdvance({ enabled, intervalMs, onTick }: Options) {
   const callback = useRef(onTick);
 

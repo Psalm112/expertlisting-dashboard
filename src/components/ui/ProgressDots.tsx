@@ -9,11 +9,8 @@ export interface Dot {
   disabled?: boolean;
 }
 
-/**
- * Slide indicator on the photo cards. The design draws these as a passive
- * indicator; making them clickable costs nothing and gives the card a second
- * way in.
- */
+
+ 
 export function ProgressDots({
   dots,
   active,

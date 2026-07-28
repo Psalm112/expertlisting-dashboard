@@ -8,14 +8,7 @@ import { SPRING } from '@/lib/motion';
 import { NAV_ITEMS } from '@/lib/mock-data';
 import { cn } from '@/lib/cn';
 
-/**
- * The six section tabs.
- *
- * The design only specifies 1440, where the row is spread edge to edge. Below
- * `xl` the tabs become a horizontally scrollable strip rather than collapsing
- * into a drawer: six destinations stay one tap away, keyboard order is
- * unchanged, and there is no menu state to manage.
- */
+
 export function PrimaryNav() {
   const pathname = usePathname();
 

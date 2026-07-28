@@ -4,7 +4,7 @@
  * change - nothing in the component tree knows where the data comes from.
  */
 
-/** Keys into the generated icon set, so data never imports React components. */
+/** Keys into the generated icon set */
 export type IconKey =
   | 'dashboard'
   | 'listings'
@@ -27,22 +27,17 @@ export interface NavItem {
 
 export interface QuickAction {
   id: string;
-  /** Accessible name - these render as icon-only buttons in the masthead. */
   label: string;
   icon: IconKey;
 }
 
 export interface CurrentUser {
-  /** Name used in the page greeting. */
   greetingName: string;
-  /** Full name, shown in the avatar's hover card. */
   name: string;
   email: string;
-  /** Letter shown in the masthead avatar. */
   initial: string;
 }
 
-/** A labelled figure such as "Published / 1.2k". */
 export interface Stat {
   id: string;
   label: string;
@@ -62,9 +57,7 @@ export type Trend = 'up' | 'down';
 export interface SalesMetric {
   id: string;
   label: string;
-  /** Pre-formatted so the design's exact "₦120,000,000.00" is preserved. */
   value: string;
-  /** Token name driving the figure colour. */
   tone: 'blue' | 'green' | 'orange' | 'deep';
   delta: { value: string; trend: Trend };
 }
@@ -75,7 +68,7 @@ export interface SalesSeries {
   tone: 'blue' | 'green' | 'red';
 }
 
-/** One month of the grouped bar chart; values are in millions of naira. */
+
 export interface SalesPoint {
   month: string;
   values: Record<string, number>;
@@ -94,23 +87,14 @@ export interface CardPhoto {
   alt: string;
 }
 
-/**
- * One view of a photo card, i.e. what sits behind a single badge option.
- *
- * A view can hold more than one photograph of the same listing. The prev/next
- * arrows step through those; they do not change the selected badge option.
- */
+/** One view of a photo card, i.e. what sits behind a single badge option */
 export interface CardView {
   id: string;
-  /** Badge label. Absent on cards that have no filter badge. */
   label?: string;
-  /** Empty means there is nothing behind this option, so it is not selectable. */
   photos: CardPhoto[];
-  /** Small caps label above the title, e.g. "MOST CLICKED". */
   eyebrow: string;
   title?: string;
   location?: string;
-  /** Headline figure, rendered in the design's yellow. */
   figure?: string;
 }
 
@@ -124,6 +108,5 @@ export interface MetricCard {
   views: CardView[];
   /** Index into `views` that starts selected. */
   defaultView?: number;
-  /** Only meaningful for `auto`. Timings come from the Figma prototype. */
   autoplay?: { dwellMs: number; crossfadeMs: number };
 }

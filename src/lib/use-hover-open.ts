@@ -2,13 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-/**
- * Open/close state for hover panels.
- *
- * Pointer events only open it on devices that actually hover, so a tap on a
- * touchscreen does not leave a tooltip stuck open. Focus opens it either way,
- * which is what keyboard users need.
- */
+
 export function useHoverOpen() {
   const [open, setOpen] = useState(false);
   const [hoverable, setHoverable] = useState(true);

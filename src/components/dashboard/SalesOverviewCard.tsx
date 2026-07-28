@@ -15,8 +15,7 @@ import {
 import { ChartSkeleton } from './ChartSkeleton';
 import { SalesMetricTile } from './SalesMetricTile';
 
-// Recharts is by far the heaviest thing on the page, and it is the only route
-// that needs it. Splitting it out keeps it off the initial bundle.
+
 const SalesChart = dynamic(() => import('./SalesChart').then((m) => m.SalesChart), {
   loading: () => <ChartSkeleton />,
 });
@@ -25,8 +24,6 @@ export function SalesOverviewCard() {
   const [range, setRange] = useState(DEFAULT_SALES_RANGE);
   const rangeLabel = SALES_RANGES.find((option) => option.id === range)?.label ?? '';
 
-  // `min-w-0` matters: as a grid item the card would otherwise refuse to shrink
-  // below the chart's intrinsic width and push the page into overflow.
   return (
     <Card className="flex min-w-0 flex-col p-5">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -46,8 +43,7 @@ export function SalesOverviewCard() {
         className="mt-2 self-end"
       />
 
-      {/* Chart and tiles pair up from 960, the first width where the series, its
-          axis and both arrows clear the 394px tile column. */}
+      
       <div className="mt-4 flex flex-col gap-6 min-[960px]:flex-row min-[960px]:items-center min-[960px]:gap-4">
         <div className="min-w-0 flex-1">
           <SalesChart data={SALES_DATA[range]} rangeLabel={rangeLabel} />

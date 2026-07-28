@@ -1,10 +1,7 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
-/**
- * The panel shape used by every boxed section in the design: 16px radius,
- * white fill, hairline border, and an optional tinted header strip.
- */
+
 export function Card({ className, children }: { className?: string; children: ReactNode }) {
   return (
     <section className={cn('rounded-card border-line bg-surface border', className)}>

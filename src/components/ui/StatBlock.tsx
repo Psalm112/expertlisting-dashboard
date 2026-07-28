@@ -1,8 +1,6 @@
 import { cn } from '@/lib/cn';
 
-/**
- * A labelled figure - "Published / 1.2k". Used across both overview panels.
- */
+
 export function StatBlock({
   label,
   value,

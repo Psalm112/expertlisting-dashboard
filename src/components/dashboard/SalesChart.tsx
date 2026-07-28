@@ -23,11 +23,6 @@ const GROUP_WIDTH = BAR_SIZE * 3 + BAR_GAP * 2;
 const Y_AXIS_WIDTH = 28;
 const X_AXIS_HEIGHT = 22;
 
-/**
- * The axis is labelled to 50m but June's MRR bar runs past it, as in the design.
- * Rendering against a 55m domain over 143px puts the 50m label at 130px and that
- * bar at 136px, which is what the frame measures.
- */
 const RENDER_MAX = 55;
 const PLOT_HEIGHT = 143;
 const TICKS = [0, 10, 20, 30, 40, 50];
@@ -85,8 +80,7 @@ export function SalesChart({ data, rangeLabel }: { data: SalesPoint[]; rangeLabe
     setHovered(index >= 0 && index < visible ? index : null);
   };
 
-  // Guarded rather than reset in an effect: the window can shrink under a stale
-  // hover when the container resizes or the range changes.
+  
   const index = hovered !== null && hovered < visible ? hovered : null;
   const active = index === null ? null : data[start + index];
   const readoutX =

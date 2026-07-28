@@ -7,17 +7,10 @@ import { Tooltip } from '@/components/ui/Tooltip';
 import { QUICK_ACTIONS } from '@/lib/mock-data';
 import { ProfileMenu } from './ProfileMenu';
 
-/**
- * The dark green bar: wordmark, icon-only quick actions, and the user avatar.
- *
- * All five quick actions stay visible at every width. Below `sm` the wordmark
- * collapses to just the glyph, which frees the ~150px needed to keep them.
- */
+
 export function Masthead() {
   return (
     <div className="bg-brand">
-      {/* 82px is the design height; trimmed on phones so the sticky chrome does
-          not eat a fifth of a small viewport. */}
       <div className="shell flex h-16 items-center justify-between gap-2 md:h-[82px] md:gap-4">
         <Link href="/" className="shrink-0 rounded-sm text-white" aria-label="Expert Listing home">
           <LogoMark className="h-6 w-auto transition-opacity hover:opacity-90 sm:hidden" />

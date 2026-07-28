@@ -1,12 +1,5 @@
 import type { SVGProps } from 'react';
 
-/**
- * Just the Expert Listing glyph, without the wordmark.
- *
- * Lifted from the same logo export: these are the paths that sit left of x=32,
- * where the lettering starts. Used on narrow viewports so all five quick actions
- * still fit in the masthead.
- */
 export function LogoMark(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 21 21" fill="none" role="img" aria-label="Expert Listing" {...props}>

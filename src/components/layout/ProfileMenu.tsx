@@ -5,10 +5,7 @@ import { hoverPanel, POP, SPRING } from '@/lib/motion';
 import { useHoverOpen } from '@/lib/use-hover-open';
 import { CURRENT_USER } from '@/lib/mock-data';
 
-/**
- * Avatar plus the card the prototype opens on hover: name over email, on a light
- * panel anchored to the avatar's right edge so it stays on screen at any width.
- */
+
 export function ProfileMenu() {
   const { open, triggerProps } = useHoverOpen();
 

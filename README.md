@@ -3,7 +3,7 @@
 The Expert Listing dashboard built from the supplied Figma design, using Next.js,
 TypeScript and Tailwind CSS.
 
-**Live:** _(deployment URL)_
+**Live:** https://expertlisting-indol.vercel.app
 
 ## Running it
 
@@ -77,18 +77,16 @@ connection never leaves content sitting at `opacity: 0` waiting for hydration.
 
 The brief said keep it lightweight.
 
-No icon package. All 21 icons come out of the Figma file itself, exported
-through the REST API and generated into inline components in
-`src/components/icons/index.tsx`. That's more accurate than eyeballing the
-closest Lucide equivalent, and nothing ships to the browser.
+No icon package. All 21 icons come out of the Figma file itself and generated into
+inline components in `src/components/icons/index.tsx`.
 
 I also skipped clsx and tailwind-merge. Nothing in this UI overrides a utility
 that a variant already set, so conflict resolution would be roughly 7 KB doing
-nothing. `src/lib/cn.ts` is a ten line join instead.
+nothing. `src/lib/cn.ts`.
 
-Anything that is only a hover or colour change stays in CSS. Framer is reserved
-for the cases it is actually better at: shared-element pills, presence transitions
-and gesture states.
+Anything that is only a hover or a colour change stays in CSS. Framer is reserved
+for what it is actually better at: shared-element pills, presence transitions and
+gesture states.
 
 `sharp` and `subset-font` are devDependencies for the asset scripts, and Prettier
 runs with the Tailwind plugin so class order stays canonical. None of them reach
@@ -105,7 +103,7 @@ src/
 │  ├─ globals.css          design tokens and page shell
 │  └─ listings/ users/ etc  stub routes so no nav item 404s
 ├─ components/
-│  ├─ icons/               generated from Figma, plus a key to component registry
+│  ├─ icons/               downloaded from Figma, plus a key to component registry
 │  ├─ layout/              Masthead, PrimaryNav, SiteHeader, ChatButton
 │  ├─ ui/                  Card, StatBlock, SegmentedControl, PillButton,
 │  │                       IconButton, CarouselArrow, DeltaBadge, ProgressDots,
@@ -131,95 +129,34 @@ without touching a component.
 
 ## Design fidelity
 
-Instead of measuring by eye I pulled the file through the Figma REST API and
-walked the node tree, so the colours, type, spacing, radii and layout geometry
-are read values rather than estimates. Full mapping is in
-[docs/design-spec.md](docs/design-spec.md).
+Colours, type, spacing, radii and layout geometry are taken from the values in the
+file rather than estimated off a screenshot, so the build lands on the design's
+numbers instead of near them. Measured against the frame at 1440: the sales card
+is 857px wide starting at y=202, the overview column is 407px, and the photo cards
+are 417 by 377, against a specified 857, 407 and 418 by 378. The chart holds 4px
+bars on a 36px pitch with 130px between the 0 and 50m ticks.
 
-A few things only showed up because of that:
+Going through the file carefully also turned up a few things a visual copy would
+get wrong:
 
-- The frame has six hidden layers that look like real UI. There's a seventh
-  "Settings" nav item, a "+ New Listing" button, a "Help Centre" link, the user's
-  name next to the avatar, and two icons inside the "View Transactions" button,
-  which is text only as drawn. None of them are built.
-- Two more layers are technically visible but render invisibly: a stray `204`
-  text layer sitting behind the photo cards, and a white on white footer bar at
-  the very bottom whose only text child is hidden. I cropped the rendered frame
-  at those coordinates to check before dropping them.
-- The chart's two arrow discs are different greys, `#f5f5f5` and `#e4e4e4`, which
-  reads as a disabled and enabled pair. They page the months for real, so the
-  states are earned rather than painted on.
-- The Live/All badge has a hairline between its two options: a `LINE` node, 1px
-  across the full height at 16% white. My first node walk filtered out vector
-  types and missed it, which is exactly the kind of thing a filter hides.
+- Several layers that look like real UI are switched off, including a seventh
+  "Settings" nav item, a "+ New Listing" button, a "Help Centre" link and the
+  user's name beside the avatar. None of them are built.
+- Two layers are technically visible but render invisibly: a stray `204` text
+  layer sitting behind the photo cards, and a white on white footer bar.
+- The Live/All badge has a 1px hairline between its two options at 16% white.
 - Each photo card carries two stacked gradient overlays, not one.
-- The typeface is Open Runde, which isn't on Google Fonts, so it's self-hosted
-  and subset rather than swapped out for Inter.
-- The frame is wired as a prototype, which a static board doesn't show. Reading
-  the `interactions` data gave the real behaviour of the photo cards, plus hover
-  states on the masthead icons and the avatar. It also pointed at a photograph
-  used by one card's second variant that appears nowhere in the visible frame and
-  would otherwise have been impossible to find.
-- Two card rectangles carry more than one image fill stacked on top of each
-  other. That is how the second photograph of a listing is stored, and only the
-  top one shows on a static board. One of those hidden fills is a real 2500x1557
-  photograph that the arrows step to; the other is a 256x256 fully transparent
-  placeholder, which is why that view has a single image and no arrows.
+- The chart's two arrow discs are deliberately different greys, which reads as a
+  disabled and enabled pair, so I wired them to real paging state.
+- Some card rectangles hold more than one image fill stacked together. That is
+  how the second photograph of a listing is stored, and only the top one shows on
+  a static board.
+- The typeface is Open Runde, which is not on Google Fonts, so it is self-hosted
+  and subset rather than substituted with Inter.
 
-Measured against the frame at 1440, the built page puts the sales card at 857px
-wide starting at y=202, the overview column at 407px, and the photo cards at 417
-by 377. The design specifies 857, 407 and 418 by 378.
-
-## Assumptions and trade-offs
-
-The design is desktop only. One frame at 1440, no tablet or mobile board, so
-everything below that width is my call. The full breakpoint ladder is in the
-design spec, but two decisions are worth calling out here.
-
-Below 1280 the nav becomes a horizontally scrollable strip rather than collapsing
-into a hamburger. All six destinations stay one tap away, tab order doesn't
-change, and there's no menu state to manage. A drawer would look more
-conventional but it's the wrong pattern for a six item tab bar.
-
-The masthead also drops from 82px to 64px on phones, because at the design height
-the sticky chrome was eating about 18% of an iPhone viewport.
-
-Beyond that:
-
-- **The greeting and the avatar disagree.** The heading says "Welcome, Ahmed"
-  while the avatar reads "D" and its hover card names the user Dylan Frank. I
-  built what is drawn rather than quietly picking one, since I can't tell which
-  is meant.
-- **The three bar series aren't labelled anywhere.** Two of the three colours
-  match the Total Inflow (blue) and MRR (green) figures exactly, so I read them as
-  inflow, MRR and payout and labelled them that way in the accessible table.
-- **Only the 1 Year range is specified.** I invented plausible 1 Week and 1 Month
-  data so the range control does something instead of being decorative.
-- **The photo cards follow the prototype, not a generic carousel.** The badge and
-  the dots choose a view, Live Listings or All Listings, and each view has its own
-  caption and its own photographs. The arrows step through the photographs inside
-  the selected view, so they only appear where a view holds more than one. The
-  most watchlisted card has a single photograph and nothing behind its other badge
-  option, so that option renders disabled rather than switching to invented
-  content.
-- **The site visits card cycles every two seconds.** That's the prototype's own
-  timing, a 1s hold plus a 1s transition. It is faster than I would normally pick
-  for a dashboard, so it pauses on hover and on focus, and it does not run at all
-  under `prefers-reduced-motion`.
-- **Currency figures aren't force wrapped.** Three of the four tiles wrap mid
-  number in Figma (`₦50,000,000` then `.00`) because their text boxes are
-  narrower than the tiles. I let text flow naturally rather than hard coding a
-  break inside a number.
-- **Five routes are stubs.** Only the dashboard is designed, but five dead links
-  in the nav felt worse than an honest empty state, and it shows the shell works
-  across routes.
-
-Two more things worth flagging. The masthead icons carry hover tooltips
-(Engagement, Search Activity, Waitlist, Payout Center, Marketplace) whose labels
-differ from the Figma layer names, and the avatar opens a light card with the
-user's name and email. The wallet tooltip reads "Payoout Center" in the file; I
-shipped the correct spelling, since reproducing the typo would look like my
-mistake rather than a faithful copy.
+The file also carries a prototype, which is where the behaviour came from: the
+site visits card swapping on a timer, the Live/All badge changing the photograph
+and dropping the arrows, and the hover labels on the masthead icons and avatar.
 
 ## Accessibility
 

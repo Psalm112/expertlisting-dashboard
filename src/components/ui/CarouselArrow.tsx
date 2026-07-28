@@ -12,14 +12,7 @@ const ICONS = {
   media: { prev: CarouselPrev, next: CarouselNext },
 } as const;
 
-/**
- * Circular step control. Two sizes appear in the design: small grey discs beside
- * the chart, and larger translucent discs over the photo cards.
- *
- * The chart discs carry a real disabled state. In the source design the left
- * disc is a lighter grey than the right, because the chart is parked at its
- * starting position.
- */
+
 export function CarouselArrow({
   direction,
   variant = 'media',

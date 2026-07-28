@@ -17,8 +17,6 @@ import type {
  */
 
 export const CURRENT_USER: CurrentUser = {
-  // The page greets "Ahmed" while the avatar and its hover card say Dylan Frank.
-  // Reproduced as drawn rather than silently reconciled. See README > Assumptions.
   greetingName: 'Ahmed',
   name: 'Dylan Frank',
   email: 'dylanfran96@gmail.com',
@@ -35,9 +33,7 @@ export const NAV_ITEMS: NavItem[] = [
 ];
 
 /**
- * Labels are the ones the prototype shows in each icon's hover tooltip, not the
- * Figma layer names, which differ. The wallet tooltip reads "Payoout Center" in
- * the file; the typo is corrected here. See README > Assumptions.
+ * Labels are the ones the prototype shows in each icon's hover tooltip
  */
 export const QUICK_ACTIONS: QuickAction[] = [
   { id: 'engagement', label: 'Engagement', icon: 'messages' },
@@ -59,11 +55,7 @@ export const SALES_RANGES: SalesRange[] = [
 
 export const DEFAULT_SALES_RANGE = 'year';
 
-/**
- * The design does not label the three bar series. Two of the three colours match
- * the Total Inflow (blue) and MRR (green) figures exactly, so they are read as
- * inflow / MRR / payout.
- */
+
 export const SALES_SERIES: SalesSeries[] = [
   { key: 'inflow', label: 'Total inflow', tone: 'blue' },
   { key: 'mrr', label: 'MRR', tone: 'green' },
@@ -175,19 +167,6 @@ export const OVERVIEW_PANELS: OverviewPanel[] = [
 /* Photo metric cards                                                         */
 /* -------------------------------------------------------------------------- */
 
-/**
- * The photo cards are component instances in Figma with two variants each, wired
- * up in the prototype. The views below mirror that wiring:
- *
- * - Site visits (node 717:1985) swaps variant on an AFTER_TIMEOUT of 1s using a
- *   SMART_ANIMATE transition of 1s, linear. Hence `autoplay`.
- * - Most clicked (node 717:1986) swaps variant when "All Listings" is clicked.
- *   Its Live Listings view carries two image fills stacked on one rectangle,
- *   which are two photographs of the same listing; the arrows step between them.
- *   The All Listings variant has a single photograph and no arrows.
- * - Most watchlisted is a detached frame with one photograph and no prototype
- *   wiring, so its other option has nothing behind it and is not selectable.
- */
 export const METRIC_CARDS: MetricCard[] = [
   {
     id: 'site-visits',

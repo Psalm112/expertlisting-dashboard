@@ -13,18 +13,8 @@ import { cn } from '@/lib/cn';
 import { useAutoAdvance } from './use-auto-advance';
 import { LISTING_IMAGES } from './listing-images';
 
-/**
- * Two axes, which the design keeps distinct:
- *
- * - The badge and the dots choose a view, Live Listings or All Listings. Each
- *   view has its own caption and its own photographs.
- * - The arrows step through the photographs inside the selected view, so they
- *   only appear where a view holds more than one.
- *
- * The site visits card has no badge and cycles its views on a timer instead.
- */
 
-/** The badge swap is instant in the prototype; a short fade reads better. */
+
 const FILTER_CROSSFADE_MS = 220;
 
 export function MetricPhotoCard({ card, priority }: { card: MetricCard; priority?: boolean }) {

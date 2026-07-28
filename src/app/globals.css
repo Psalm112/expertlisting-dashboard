@@ -1,7 +1,6 @@
 @import 'tailwindcss';
 
-/* Values read out of the Figma file via the REST API rather than sampled by eye.
-   docs/design-spec.md maps each one back to the layer it came from. */
+/* Values read out of the Figma file rather than sampled by eye. */
 @theme {
   --font-sans: var(--font-open-runde), ui-sans-serif, system-ui, sans-serif;
 

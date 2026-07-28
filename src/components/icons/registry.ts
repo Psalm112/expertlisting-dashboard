@@ -15,10 +15,7 @@ import {
   type IconProps,
 } from './index';
 
-/**
- * Bridges the string keys used in the data layer to the generated components,
- * so fixtures (and, later, an API response) never import React.
- */
+
 export const ICONS: Record<IconKey, ComponentType<IconProps>> = {
   dashboard: NavDashboard,
   listings: NavListings,

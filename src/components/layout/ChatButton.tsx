@@ -4,13 +4,7 @@ import { m } from 'framer-motion';
 import { ChatBubble } from '@/components/icons';
 import { EASE_OUT, SPRING } from '@/lib/motion';
 
-/**
- * Floating support entry point.
- *
- * The Figma frame parks this mid-canvas, which is an artefact of a static
- * mockup. Here it is pinned to the bottom-right of the viewport, which is what a
- * floating action button is for.
- */
+
 export function ChatButton() {
   return (
     <m.button

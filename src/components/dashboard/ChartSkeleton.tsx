@@ -1,4 +1,4 @@
-/** Placeholder with the chart's exact footprint, so nothing shifts as it loads. */
+/** Placeholder with the chart's exact footprint */
 export function ChartSkeleton() {
   return (
     <div className="flex min-w-0 flex-col gap-3" aria-hidden>
