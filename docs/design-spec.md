@@ -137,7 +137,7 @@ Visible in the tree but invisible in the render, so treated as leftovers:
 
 * A stray `204` text layer at `(348, 791)`, painted over by the photo card row
 * A `1440 x 23` footer bar at the very bottom, white on near white, whose only
-  text child ("Powered by Myxellia…") is hidden
+  text child ("Powered by Myxellia") is hidden
 
 I confirmed both by cropping the rendered frame at those coordinates.
 
