@@ -83,39 +83,48 @@ export interface SalesRange {
   label: string;
 }
 
-export type ListingImage = 'siteVisits' | 'mostClicked' | 'mostWatchlisted' | 'listingViews';
+export type ListingImage =
+  | 'siteVisits'
+  | 'mostClicked'
+  | 'mostClicked2'
+  | 'mostWatchlisted'
+  | 'listingViews';
+
+export interface CardPhoto {
+  key: ListingImage;
+  alt: string;
+}
 
 /**
- * One state of a photo card. In the Figma file these are component variants, and
- * the whole card swaps between them: photograph, caption and arrows all change
- * together.
+ * One view of a photo card, i.e. what sits behind a single badge option.
+ *
+ * A view can hold more than one photograph of the same listing. The prev/next
+ * arrows step through those; they do not change the selected badge option.
  */
-export interface CardState {
+export interface CardView {
   id: string;
-  image: ListingImage;
-  imageAlt: string;
+  /** Badge label. Absent on cards that have no filter badge. */
+  label?: string;
+  /** Empty means there is nothing behind this option, so it is not selectable. */
+  photos: CardPhoto[];
   /** Small caps label above the title, e.g. "MOST CLICKED". */
   eyebrow: string;
   title?: string;
   location?: string;
   /** Headline figure, rendered in the design's yellow. */
-  figure: string;
-  /** Prev/next arrows are only drawn on some states. */
-  showArrows: boolean;
+  figure?: string;
 }
 
 export interface MetricCard {
   id: string;
   /**
-   * How the card moves between states.
+   * How the card moves between views.
    * `auto` cycles on a timer, `filter` switches from the Live/All badge.
    */
   mode: 'auto' | 'filter';
-  /** Live/All filter shown on cards that have one. */
-  filters?: string[];
-  /** Index into `states` that starts visible. */
-  defaultState?: number;
-  states: CardState[];
+  views: CardView[];
+  /** Index into `views` that starts selected. */
+  defaultView?: number;
   /** Only meaningful for `auto`. Timings come from the Figma prototype. */
   autoplay?: { dwellMs: number; crossfadeMs: number };
 }

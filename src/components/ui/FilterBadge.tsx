@@ -2,6 +2,12 @@
 
 import { cn } from '@/lib/cn';
 
+export interface FilterOption {
+  label: string;
+  /** Set when there is nothing behind the option, e.g. no photographs. */
+  disabled?: boolean;
+}
+
 /**
  * Live Listings / All Listings switch floating over the photo cards.
  * The selected option is marked by a yellow dot as well as colour.
@@ -12,7 +18,7 @@ export function FilterBadge({
   onChange,
   label,
 }: {
-  options: string[];
+  options: FilterOption[];
   value: number;
   onChange: (index: number) => void;
   label: string;
@@ -31,19 +37,23 @@ export function FilterBadge({
 
         return (
           <button
-            key={option}
+            key={option.label}
             type="button"
             role="radio"
             aria-checked={selected}
+            disabled={option.disabled}
+            title={option.disabled ? `No listings under ${option.label}` : undefined}
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(index)}
             className={cn(
               'inline-flex items-center gap-1 rounded-sm text-sm font-medium transition-colors duration-150',
-              selected ? 'text-highlight' : 'text-ink-on-media-dim hover:text-white',
+              selected && 'text-highlight',
+              !selected && !option.disabled && 'text-ink-on-media-dim hover:text-white',
+              option.disabled && 'cursor-not-allowed text-white/35',
             )}
           >
             {selected && <span aria-hidden className="size-1.5 rounded-full bg-highlight" />}
-            {option}
+            {option.label}
           </button>
         );
       })}

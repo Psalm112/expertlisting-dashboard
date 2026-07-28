@@ -175,93 +175,100 @@ export const OVERVIEW_PANELS: OverviewPanel[] = [
 
 /**
  * The photo cards are component instances in Figma with two variants each, wired
- * up in the prototype. The states below mirror that wiring:
+ * up in the prototype. The views below mirror that wiring:
  *
  * - Site visits (node 717:1985) swaps variant on an AFTER_TIMEOUT of 1s using a
  *   SMART_ANIMATE transition of 1s, linear. Hence `autoplay`.
  * - Most clicked (node 717:1986) swaps variant when "All Listings" is clicked.
- *   The second variant puts the site-visits photograph on top and drops the
- *   prev/next arrows.
- * - Most watchlisted is a detached frame in the file with no prototype wiring, so
- *   its second state is invented. See README > Assumptions.
+ *   Its Live Listings view carries two image fills stacked on one rectangle,
+ *   which are two photographs of the same listing; the arrows step between them.
+ *   The All Listings variant has a single photograph and no arrows.
+ * - Most watchlisted is a detached frame with one photograph and no prototype
+ *   wiring, so its other option has nothing behind it and is not selectable.
  */
 export const METRIC_CARDS: MetricCard[] = [
   {
     id: 'site-visits',
     mode: 'auto',
     autoplay: { dwellMs: 1000, crossfadeMs: 1000 },
-    states: [
+    views: [
       {
         id: 'visits',
-        image: 'siteVisits',
-        imageAlt: 'Glass office towers seen from street level on an overcast morning',
         eyebrow: 'Total site visits',
         figure: '11k',
-        showArrows: false,
+        photos: [
+          {
+            key: 'siteVisits',
+            alt: 'Glass office towers seen from street level on an overcast morning',
+          },
+        ],
       },
       {
         id: 'listing-views',
-        image: 'listingViews',
-        imageAlt: 'Dark clad apartment block with amber window reveals against a clear sky',
         eyebrow: 'Total listing views',
         figure: '20k',
-        showArrows: false,
+        photos: [
+          {
+            key: 'listingViews',
+            alt: 'Dark clad apartment block with amber window reveals against a clear sky',
+          },
+        ],
       },
     ],
   },
   {
     id: 'most-clicked',
     mode: 'filter',
-    filters: ['Live Listings', 'All Listings'],
-    defaultState: 0,
-    states: [
+    defaultView: 0,
+    views: [
       {
         id: 'live',
-        image: 'mostClicked',
-        imageAlt: 'White high-rise apartment tower with red accent panels',
+        label: 'Live Listings',
         eyebrow: 'Most clicked',
         title: 'Urban Prime Plaza Premiere',
         location: 'Ikoyi, Lagos',
         figure: '40k',
-        showArrows: true,
+        photos: [
+          { key: 'mostClicked', alt: 'White high-rise apartment tower with red accent panels' },
+          {
+            key: 'mostClicked2',
+            alt: 'Low-rise villas with palm trees along a landscaped waterfront path',
+          },
+        ],
       },
       {
         id: 'all',
-        image: 'siteVisits',
-        imageAlt: 'Glass office towers seen from street level on an overcast morning',
+        label: 'All Listings',
         eyebrow: 'Most clicked',
         title: 'Grey Abode',
         location: 'Ajah, Lagos',
         figure: '40k',
-        showArrows: false,
+        photos: [
+          {
+            key: 'siteVisits',
+            alt: 'Glass office towers seen from street level on an overcast morning',
+          },
+        ],
       },
     ],
   },
   {
     id: 'most-watchlisted',
     mode: 'filter',
-    filters: ['Live Listings', 'All Listings'],
-    defaultState: 1,
-    states: [
-      {
-        id: 'live',
-        image: 'mostWatchlisted',
-        imageAlt: 'Brick apartment building with balconies on each floor',
-        eyebrow: 'Most watchlisted',
-        title: 'Lekki Gardens Court II',
-        location: 'Lekki Phase 1, Lagos',
-        figure: '17k',
-        showArrows: true,
-      },
+    defaultView: 1,
+    views: [
+      // Nothing sits behind this option in the file, so it renders disabled.
+      { id: 'live', label: 'Live Listings', eyebrow: 'Most watchlisted', photos: [] },
       {
         id: 'all',
-        image: 'mostWatchlisted',
-        imageAlt: 'Brick apartment building with balconies on each floor',
+        label: 'All Listings',
         eyebrow: 'Most watchlisted',
         title: 'Urban Prime Plaza Premiere',
         location: 'Ikoyi, Lagos',
         figure: '20k',
-        showArrows: true,
+        photos: [
+          { key: 'mostWatchlisted', alt: 'Brick apartment building with balconies on each floor' },
+        ],
       },
     ],
   },
