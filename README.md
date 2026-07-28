@@ -121,6 +121,14 @@ A few things only showed up because of that:
 * Each photo card carries two stacked gradient overlays, not one.
 * The typeface is Open Runde, which isn't on Google Fonts, so it's self-hosted
   and subset rather than swapped out for Inter.
+* The frame is wired as a prototype, which a static board doesn't show. Reading
+  the `interactions` data gave the real behaviour of the photo cards, plus hover
+  states on the masthead icons and the avatar. It also pointed at a photograph
+  used by one card's second variant that appears nowhere in the visible frame and
+  would otherwise have been impossible to find.
+* Two of the image fills are stacked underneath opaque ones on the same
+  rectangle, so they never render. The asset script skips them by name rather
+  than silently.
 
 Measured against the frame at 1440, the built page puts the sales card at 857px
 wide starting at y=202, the overview column at 407px, and the photo cards at 417
@@ -150,9 +158,16 @@ Beyond that:
   inflow, MRR and payout and labelled them that way in the accessible table.
 * **Only the 1 Year range is specified.** I invented plausible 1 Week and 1 Month
   data so the range control does something instead of being decorative.
-* **Carousel slides change the caption, not the photo.** There's one image per
-  card in the file. Second slides are mock data, and swapping the photo too would
-  have meant inventing imagery.
+* **The photo cards follow the prototype, not a generic carousel.** Each is a two
+  variant component in Figma and the whole card swaps: photograph, caption and
+  arrows together. Site visits does it on a timer, most clicked does it from the
+  Live/All badge. The one invented piece is the most watchlisted card's second
+  state, since that card is detached in the file and has nothing wired to it, so
+  it swaps caption only and keeps its photograph.
+* **The site visits card cycles every two seconds.** That's the prototype's own
+  timing, a 1s hold plus a 1s transition. It is faster than I would normally pick
+  for a dashboard, so it pauses on hover and on focus, and it does not run at all
+  under `prefers-reduced-motion`.
 * **Currency figures aren't force wrapped.** Three of the four tiles wrap mid
   number in Figma (`₦50,000,000` then `.00`) because their text boxes are
   narrower than the tiles. I let text flow naturally rather than hard coding a

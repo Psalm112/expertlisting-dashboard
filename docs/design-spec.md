@@ -141,6 +141,47 @@ Visible in the tree but invisible in the render, so treated as leftovers:
 
 I confirmed both by cropping the rendered frame at those coordinates.
 
+## Prototype behaviour
+
+The frame is wired up as a prototype, which the static board does not show. These
+came out of the `interactions` data on the nodes.
+
+| Node | Trigger | Result |
+| --- | --- | --- |
+| `717:1985` site visits card | `AFTER_TIMEOUT` 1s | `CHANGE_TO 717:600`, SMART_ANIMATE, linear, 1s |
+| `717:1986` most clicked card, "All Listings" | `ON_CLICK` | `CHANGE_TO 717:690`, no transition |
+| 5 masthead icons | `ON_HOVER` | variant swap, 300ms ease out (400ms for Marketplace) |
+| Profile avatar | `ON_HOVER` | `CHANGE_TO 717:1377`, SMART_ANIMATE 300ms |
+| Profile avatar | `ON_CLICK` | opens an overlay |
+| "View all", "View Transactions", logo | `ON_CLICK` | navigate, no destination set |
+
+So the photo cards are not carousels in the usual sense. Each is a two variant
+component and the whole card swaps: photograph, caption and arrows together.
+
+Reading the two destination variants gives their fills:
+
+* `717:600` (site visits, second state) uses image `20f6149f6c`, which is not
+  present anywhere in the visible frame. It is the only way to get that
+  photograph out of the file.
+* `717:690` (most clicked, All Listings) stacks `ece298d0` underneath
+  `0e2748145f`. The one on top is the same photograph the site visits card uses,
+  which is why selecting All Listings changes the picture. That variant also
+  drops the prev/next arrows.
+
+The masthead hover variants could not be exported. They resolve as remote
+components with no local geometry, so the API renders nothing for them.
+
+### About the unused image
+
+The file holds 44 image fills; only 5 are reachable from the Dashboard frame.
+One of those, `5cf13f962e`, is stacked *underneath* `0a37afeb3f` on the same
+rectangle in the most clicked card. Figma paints later fills on top, and the
+upper one is opaque, so `5cf13f962e` never renders. The same pattern appears in
+the All Listings variant, where `ece298d0` sits under `0e2748145f`.
+
+Both are leftovers. They are not shipped, and `scripts/optimize-images.mjs` skips
+them explicitly rather than silently.
+
 ## Deviations from the source
 
 All of these are deliberate.
@@ -163,6 +204,17 @@ All of these are deliberate.
 5. **The greeting and avatar disagree, and both are kept.** The heading reads
    "Welcome, Ahmed" while the avatar reads "D" and the hidden name layer says
    "Dylan Frank". Reproduced as drawn rather than quietly reconciled.
+6. **Captions stagger instead of cross-dissolving.** The site visits card fades
+   over a full second, per the prototype. Dissolving two different captions on
+   top of each other for that long reads as doubled text, so the outgoing caption
+   clears in the first 35% and the incoming one arrives at 40%. The photographs
+   still cross-dissolve over the full duration.
+7. **The All Listings swap gets a 220ms fade.** The prototype sets no transition
+   on that click, so it would be instant. A short fade matches the 300ms the rest
+   of the file uses and avoids a hard cut.
+8. **The most watchlisted card's second state is invented.** That card is a
+   detached frame in the file with no prototype wiring, so its badge has nothing
+   to switch to. It swaps caption only and keeps its photograph.
 
 ## Responsive behaviour
 
@@ -171,10 +223,22 @@ Derived, since the file only specifies 1440.
 | Breakpoint | Layout |
 | --- | --- |
 | under 640 | Single column throughout. Masthead trims to 64px and keeps two quick actions. Stat tiles stack. |
-| 640 to 1023 | Photo cards go two up, stat tiles go two up. |
-| 1024 to 1279 | Photo cards go three up. |
-| 1280 and over | Sales card and overview column sit side by side. |
+| 640 to 959 | Photo cards go two up, stat tiles go two up. The chart sits above the tiles and centres in its card. |
+| 960 to 1023 | Chart and stat tiles move side by side inside the sales card. |
+| 1024 to 1359 | Photo cards go three up. |
+| 1360 and over | Sales card and overview column sit side by side, the sales card at its designed 857px. |
 | 1440 | Matches the Figma frame. |
+
+The 1360 figure is not arbitrary. The design's content column is 1284 wide with
+78px gutters, so 1360 is the first width where the two column split can give the
+sales card its full 857px instead of squeezing it. Splitting earlier left the
+chart too narrow and forced it to scroll; splitting later left a lot of empty
+space beside the series. Between 960 and 1359 the card is full width but the
+chart and tiles still sit side by side, so the space is used.
+
+Where the chart is wider than the 306px the series needs, the series centres.
+Auto margins resolve to zero once the content overflows, so nothing is pushed out
+of reach when it does scroll.
 
 Below 1280 the nav becomes a horizontally scrollable strip rather than collapsing
 into a drawer. Six destinations stay one tap away, tab order doesn't change, and
