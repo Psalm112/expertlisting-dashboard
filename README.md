@@ -65,12 +65,17 @@ bars still 4px.
 a single place. It earns its keep on the shared-element transitions: the active
 pill slides between nav tabs and between the 1 Week / 1 Month / 1 Year options via
 `layoutId`, and the yellow dot slides between Live and All Listings. Those are
-genuinely awkward in CSS. It also runs the hover panels, the caption swaps and the
-section reveals.
+genuinely awkward in CSS. It also runs the hover panels and the caption swaps.
+
+It is loaded through `LazyMotion` with `strict`, so components use the light `m.*`
+namespace and the feature bundle arrives in a second wave rather than blocking
+first paint. Nothing on the page needs Framer in order to become visible, which is
+what makes that safe: the section entrances are plain CSS precisely so a slow
+connection never leaves content sitting at `opacity: 0` waiting for hydration.
 
 ### What I left out
 
-The brief said keep it lightweight, so the rest had to argue for itself.
+The brief said keep it lightweight.
 
 No icon package. All 21 icons come out of the Figma file itself, exported
 through the REST API and generated into inline components in
@@ -231,8 +236,14 @@ Every route is statically prerendered. Seven components opt into the client, plu
 two hooks, and each of them holds real state or reads a media query.
 
 Recharts is the largest dependency, so it is dynamically imported and lands in its
-own chunk rather than the initial bundle. The skeleton behind it occupies the same
-box, so the card does not resize when the chart arrives.
+own chunk rather than the initial bundle, 88 KB gzipped that never blocks first
+paint. The skeleton behind it occupies the same box, so the card does not resize
+when the chart arrives. Framer's feature bundle is deferred the same way; in the
+network waterfall the core chunks start at 185ms and Framer follows at 387ms.
+
+Worth being straight about the trade: `LazyMotion` adds module boundaries, so the
+total JS is slightly larger than importing Framer directly. What it buys is a
+smaller blocking payload, which is the number that matters on a slow connection.
 
 Open Runde subsets from 471 KB down to 67 KB across the three weights, self-hosted
 with `display: swap` and a metric adjusted fallback so layout shift stays near

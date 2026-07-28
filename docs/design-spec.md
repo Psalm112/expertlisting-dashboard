@@ -90,6 +90,11 @@ That's reproduced rather than clamped.
 | `ink-on-media`     | `#e4e4e7` | location line over photos          |
 | `ink-on-media-dim` | `#d4d4d8` | inactive badge tab                 |
 
+The Live/All badge carries a hairline between its two options: `Line 164`, 1px
+across the full 26px height, stroked `#ffffff` at 16%, sitting centred in the 16px
+gap. It is a `LINE` node, which is worth noting because a node walk that filters
+vector types will miss it entirely.
+
 The photo cards carry two stacked gradients, not one:
 `rgba(0,0,0,.05)` to `rgba(0,0,0,.6)`, underneath `rgba(0,0,0,.2)` to
 `rgba(0,0,0,.8)`. That's the `media-scrim` utility.
