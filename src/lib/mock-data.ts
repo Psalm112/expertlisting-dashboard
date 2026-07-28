@@ -17,9 +17,11 @@ import type {
  */
 
 export const CURRENT_USER: CurrentUser = {
-  // The design greets "Ahmed" but draws a "D" avatar - reproduced as-is rather
-  // than silently reconciled. See README > Assumptions.
+  // The page greets "Ahmed" while the avatar and its hover card say Dylan Frank.
+  // Reproduced as drawn rather than silently reconciled. See README > Assumptions.
   greetingName: 'Ahmed',
+  name: 'Dylan Frank',
+  email: 'dylanfran96@gmail.com',
   initial: 'D',
 };
 
@@ -32,11 +34,16 @@ export const NAV_ITEMS: NavItem[] = [
   { id: 'tasks', label: 'Tasks', href: '/tasks', icon: 'tasks' },
 ];
 
+/**
+ * Labels are the ones the prototype shows in each icon's hover tooltip, not the
+ * Figma layer names, which differ. The wallet tooltip reads "Payoout Center" in
+ * the file; the typo is corrected here. See README > Assumptions.
+ */
 export const QUICK_ACTIONS: QuickAction[] = [
-  { id: 'messages', label: 'Messages', icon: 'messages' },
-  { id: 'activity', label: 'Activity log', icon: 'activity' },
+  { id: 'engagement', label: 'Engagement', icon: 'messages' },
+  { id: 'search-activity', label: 'Search Activity', icon: 'activity' },
   { id: 'waitlist', label: 'Waitlist', icon: 'waitlist' },
-  { id: 'payouts', label: 'Payout centre', icon: 'wallet' },
+  { id: 'payout-center', label: 'Payout Center', icon: 'wallet' },
   { id: 'marketplace', label: 'Marketplace', icon: 'shop' },
 ];
 

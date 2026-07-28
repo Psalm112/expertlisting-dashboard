@@ -35,6 +35,9 @@ export interface QuickAction {
 export interface CurrentUser {
   /** Name used in the page greeting. */
   greetingName: string;
+  /** Full name, shown in the avatar's hover card. */
+  name: string;
+  email: string;
   /** Letter shown in the masthead avatar. */
   initial: string;
 }
